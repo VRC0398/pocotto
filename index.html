@@ -3017,6 +3017,20 @@
   }
 
   async function setPublishFlag(publish) {
+    // If user has typed a name but profile not yet saved, save first
+    if (publish && !state.myProfileId) {
+      const name = (state.profile.display_name || '').trim();
+      if (!name) {
+        flashSaveStatus('need-fill-first');
+        return false;
+      }
+      // Try to save the draft first
+      const saved = await upsertMyProfile();
+      if (!saved) {
+        // upsertMyProfile already flashed an error; bail
+        return false;
+      }
+    }
     if (!state.myProfileId) {
       flashSaveStatus('need-fill-first');
       return false;
@@ -3050,7 +3064,9 @@
     } else {
       pubBtn.textContent = '📣 公開する';
       pubBtn.classList.remove('published');
-      pubBtn.disabled = !state.myProfileId; // need draft saved first
+      // Always enabled — click handler will show a helpful message
+      // if the name is missing or the avatar isn't uploaded yet.
+      pubBtn.disabled = false;
       if (unpubBtn) unpubBtn.style.display = 'none';
     }
   }
