@@ -2568,45 +2568,47 @@
     favBtn.textContent = isFaved ? '★ お気に入り中' : '★ お気に入り';
   }
 
-  // Modal event bindings (one-time setup)
-  document.getElementById('modalClose').addEventListener('click', closeProfileModal);
-  document.getElementById('profileModal').addEventListener('click', (e) => {
-    if (e.target.id === 'profileModal') closeProfileModal();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && document.getElementById('profileModal').classList.contains('open')) {
-      closeProfileModal();
-    }
-  });
-  document.getElementById('modalLikeBtn').addEventListener('click', async () => {
-    if (!modalUserId) return;
-    const btn = document.getElementById('modalLikeBtn');
-    if (btn.classList.contains('done')) return;
-    btn.classList.add('done');
-    btn.textContent = '♡ いいね済み';
-    btn.disabled = true;
-    showSparkle();
-    await toggleLike(modalUserId, true);
-    // refresh count for that user
-    const fresh = await supa.from('profiles_with_counts').select('likes_count').eq('id', modalUserId).single();
-    if (fresh.data) {
-      const idx2 = state.allProfiles.findIndex(p => p.id === modalUserId);
-      if (idx2 >= 0) state.allProfiles[idx2].likes_count = fresh.data.likes_count;
-      document.getElementById('modalLikes').textContent = fresh.data.likes_count;
-    }
-    // refresh the underlying card too
-    renderCards();
-  });
-  document.getElementById('modalFavBtn').addEventListener('click', async () => {
-    if (!modalUserId) return;
-    const btn = document.getElementById('modalFavBtn');
-    const nowFaved = !btn.classList.contains('faved');
-    btn.classList.toggle('faved', nowFaved);
-    btn.textContent = nowFaved ? '★ お気に入り中' : '★ お気に入り';
-    await toggleFav(modalUserId, nowFaved);
-    updateFavCounter();
-    renderCards();
-  });
+  // Modal event bindings — called once from loadInitial() after DOM is ready
+  function setupProfileModal() {
+    document.getElementById('modalClose').addEventListener('click', closeProfileModal);
+    document.getElementById('profileModal').addEventListener('click', (e) => {
+      if (e.target.id === 'profileModal') closeProfileModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('profileModal').classList.contains('open')) {
+        closeProfileModal();
+      }
+    });
+    document.getElementById('modalLikeBtn').addEventListener('click', async () => {
+      if (!modalUserId) return;
+      const btn = document.getElementById('modalLikeBtn');
+      if (btn.classList.contains('done')) return;
+      btn.classList.add('done');
+      btn.textContent = '♡ いいね済み';
+      btn.disabled = true;
+      showSparkle();
+      await toggleLike(modalUserId, true);
+      // refresh count for that user
+      const fresh = await supa.from('profiles_with_counts').select('likes_count').eq('id', modalUserId).single();
+      if (fresh.data) {
+        const idx2 = state.allProfiles.findIndex(p => p.id === modalUserId);
+        if (idx2 >= 0) state.allProfiles[idx2].likes_count = fresh.data.likes_count;
+        document.getElementById('modalLikes').textContent = fresh.data.likes_count;
+      }
+      // refresh the underlying card too
+      renderCards();
+    });
+    document.getElementById('modalFavBtn').addEventListener('click', async () => {
+      if (!modalUserId) return;
+      const btn = document.getElementById('modalFavBtn');
+      const nowFaved = !btn.classList.contains('faved');
+      btn.classList.toggle('faved', nowFaved);
+      btn.textContent = nowFaved ? '★ お気に入り中' : '★ お気に入り';
+      await toggleFav(modalUserId, nowFaved);
+      updateFavCounter();
+      renderCards();
+    });
+  }
 
   // ===== Sparkle =====
   function showSparkle() {
@@ -3036,6 +3038,7 @@
     setupProfileInputs();
     setupStatusPicker();
     setupAvatarUploader();
+    setupProfileModal();
     refreshAvatarUI();
     renderTagCloud();
     renderPreview();
