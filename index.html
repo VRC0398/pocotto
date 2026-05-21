@@ -950,6 +950,252 @@
     padding: 6px 4px;
   }
 
+  /* ===== Publish button row ===== */
+  .publish-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 0 24px 4px;
+  }
+  .publish-btn {
+    background: linear-gradient(135deg, var(--peach), var(--pink));
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 14px 32px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(255, 122, 168, 0.35);
+    transition: all 0.18s;
+    min-width: 200px;
+  }
+  .publish-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(255, 122, 168, 0.45); }
+  .publish-btn.published {
+    background: var(--mint);
+    color: var(--mint-deep);
+    box-shadow: none;
+  }
+  .publish-btn:disabled {
+    background: var(--bg-soft);
+    color: var(--ink-mute);
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .unpublish-btn {
+    background: white;
+    color: var(--ink-soft);
+    border: 1px solid var(--bg-soft);
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .unpublish-btn:hover { background: var(--bg-soft); border-color: var(--ink-mute); }
+
+  /* ===== Notification bell ===== */
+  .notif-bell {
+    position: relative;
+    padding: 8px 14px;
+  }
+  .notif-bell .bell-ico {
+    font-size: 16px;
+  }
+  .notif-bell .bell-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--pink);
+    color: white;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 2px 6px;
+    min-width: 18px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(255, 122, 168, 0.3);
+  }
+  .notif-bell.bump { animation: bellBump 0.45s ease; }
+  @keyframes bellBump {
+    0% { transform: rotate(0); }
+    25% { transform: rotate(-12deg); }
+    50% { transform: rotate(10deg); }
+    75% { transform: rotate(-6deg); }
+    100% { transform: rotate(0); }
+  }
+
+  /* Notification dropdown panel */
+  .notif-panel {
+    position: fixed;
+    top: 64px;
+    right: 16px;
+    width: 320px;
+    max-height: 480px;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    z-index: 1500;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    animation: panelDrop 0.18s ease;
+  }
+  .notif-panel.open { display: flex; }
+  @keyframes panelDrop {
+    from { transform: translateY(-8px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+  .notif-panel .np-header {
+    padding: 14px 16px 10px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    color: var(--ink);
+    border-bottom: 1px solid var(--bg-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .notif-panel .np-clear {
+    background: none;
+    border: none;
+    color: var(--pink-deep);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 8px;
+  }
+  .notif-panel .np-clear:hover { background: var(--pink-light); }
+  .notif-panel .np-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+  }
+  .notif-panel .np-empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--ink-mute);
+    font-size: 13px;
+  }
+  .notif-panel .np-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .notif-panel .np-item:hover { background: var(--bg-soft); }
+  .notif-panel .np-item .np-icon {
+    font-size: 20px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--pink-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .notif-panel .np-item .np-icon.chat { background: var(--cream); }
+  .notif-panel .np-item .np-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .notif-panel .np-item .np-msg {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .notif-panel .np-item .np-sub {
+    font-size: 11px;
+    color: var(--ink-mute);
+  }
+
+  /* ===== Toast ===== */
+  .toast-stack {
+    position: fixed;
+    top: 80px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1600;
+    pointer-events: none;
+  }
+  .toast {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 260px;
+    max-width: 360px;
+    pointer-events: auto;
+    cursor: pointer;
+    animation: toastIn 0.3s ease;
+    border-left: 4px solid var(--pink);
+  }
+  .toast.fade-out { animation: toastOut 0.3s ease forwards; }
+  @keyframes toastIn {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+  @keyframes toastOut {
+    to { transform: translateX(20px); opacity: 0; }
+  }
+  .toast .t-ico { font-size: 22px; flex-shrink: 0; }
+  .toast .t-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .toast .t-title {
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .toast .t-msg {
+    font-size: 12px;
+    color: var(--ink-soft);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ===== VRC URL link on profile modal ===== */
+  .modal-vrc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, var(--sky, #a8d8e8), var(--lavender, #b9a8e8));
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 8px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    margin-bottom: 14px;
+    transition: transform 0.15s;
+    word-break: break-all;
+  }
+  .modal-vrc-link:hover { transform: translateY(-2px); }
+  .modal-vrc-link::before { content: '🌐'; }
+
   /* Tag suggestions row */
   .tag-suggest-wrap {
     width: 100%;
@@ -2173,6 +2419,10 @@
       </ul>
     </nav>
     <div class="header-actions">
+      <button class="btn btn-ghost notif-bell" id="notifBell" type="button" title="お知らせ" aria-label="お知らせ">
+        <span class="bell-ico">🔔</span>
+        <span class="bell-badge" id="bellBadge" style="display:none;">0</span>
+      </button>
       <button class="btn btn-ghost fav-counter" id="favCounter" type="button" title="お気に入りした子">
         <span class="fav-heart">♡</span>
         <span class="fav-num" id="favNum">0</span>
@@ -2266,8 +2516,8 @@
             <span class="field-title">じこしょうかい</span>
             <span class="field-sub">ひとことで自由にどうぞ</span>
           </label>
-          <textarea class="field-input field-textarea" id="inpBio" maxlength="80" rows="2" placeholder="例：写真撮るのが好きです！おさんぽしよ〜"></textarea>
-          <div class="field-counter" id="bioCount">0 / 80</div>
+          <textarea class="field-input field-textarea" id="inpBio" maxlength="160" rows="2" placeholder="例：写真撮るのが好きです！おさんぽしよ〜"></textarea>
+          <div class="field-counter" id="bioCount">0 / 160</div>
         </div>
 
         <div class="field">
@@ -2300,12 +2550,27 @@
           </div>
         </div>
 
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">⑥</span>
+            <span class="field-title">VRChat プロフィールURL</span>
+            <span class="field-sub">あれば貼ってね（任意）</span>
+          </label>
+          <input type="url" class="field-input" id="inpVrcUrl" maxlength="200" placeholder="https://vrchat.com/home/user/usr_xxxxxxxx">
+          <div class="field-counter" id="vrcUrlHint">VRChat のプロフィールページURLが入るよ</div>
+        </div>
+
       </div>
     </div>
 
     <div class="save-status" id="saveStatus">
       <span class="save-ico">☁️</span>
-      <span>みんなと共有されるよ ✨</span>
+      <span>下書き保存中 ✨</span>
+    </div>
+
+    <div class="publish-row">
+      <button type="button" class="publish-btn" id="publishBtn">📣 公開する</button>
+      <button type="button" class="unpublish-btn" id="unpublishBtn" style="display:none;">🌱 非公開にする</button>
     </div>
   </div>
 </section>
@@ -2438,7 +2703,7 @@
   ];
 
   const EMOJI_CHOICES = ['🍑','🌷','🐰','🌻','☕','🌙','🎀','🌟','🍀','🧸','🍓','🦋','🌸','🍰','☁️','🐱'];
-  const DEFAULT_PROFILE = { display_name: '', bio: '', avatar_url: '', status: 'online', tags: [] };
+  const DEFAULT_PROFILE = { display_name: '', bio: '', avatar_url: '', vrc_url: '', status: 'online', tags: [] };
   const STORAGE_BUCKET = 'profile-images';
   const AVATAR_MAX_BYTES = 10 * 1024 * 1024; // 10MB upload limit (resized to ~512px before send)
 
@@ -2497,7 +2762,11 @@
     chatMessages: [],           // 現在のチャットのメッセージ配列
     chatChannel: null,          // 現在の Realtime チャンネル
     // last-seen markers for unread indicators: { peerId: lastSeenISO }
-    lastSeen: {}
+    lastSeen: {},
+    // notifications
+    notifications: [],          // 受信通知 [{ type, peerId, msg, at }]
+    notifChannel: null,         // 通知用 Realtime チャンネル
+    notifSession: Date.now()    // このセッションが開始した時刻（これより新しいものだけ通知扱い）
   };
 
   // Persist UI-only state (sort/favOnly + tag selections + chat last-seen) locally
@@ -2540,6 +2809,7 @@
       .from('profiles_with_counts')
       .select('*')
       .eq('is_seed', false)
+      .eq('is_published', true)
       .order('created_at', { ascending: false });
     if (error) { console.warn('fetchAllProfiles error', error); return []; }
     return data || [];
@@ -2697,22 +2967,18 @@
   }
 
   async function upsertMyProfile() {
-    // require display_name
+    // require display_name for saving at all
     const p = state.profile;
     if (!p.display_name || !p.display_name.trim()) return null;
-    // require avatar_url on first publish
-    if (!state.myProfileId && !p.avatar_url) {
-      flashSaveStatus('need-avatar');
-      return null;
-    }
 
     if (state.myProfileId) {
-      // UPDATE existing
+      // UPDATE existing (does not change is_published flag)
       const { data, error } = await supa
         .from('profiles')
         .update({
           display_name: p.display_name.trim(),
           avatar_url: p.avatar_url || null,
+          vrc_url: p.vrc_url || null,
           bio: p.bio || null,
           tags: p.tags || [],
           status: p.status
@@ -2725,26 +2991,67 @@
       flashSaveStatus('saved');
       return data;
     } else {
-      // INSERT new
+      // INSERT new — saved as draft (is_published=false)
       const { data, error } = await supa
         .from('profiles')
         .insert({
           owner_secret: MY_SECRET,
           display_name: p.display_name.trim(),
           avatar_url: p.avatar_url || null,
+          vrc_url: p.vrc_url || null,
           bio: p.bio || null,
           tags: p.tags || [],
           status: p.status,
-          is_seed: false
+          is_seed: false,
+          is_published: false
         })
         .select()
         .single();
       if (error) { console.warn('insert err', error); flashSaveStatus('error'); return null; }
       state.myProfileId = data.id;
       localStorage.setItem(KEY_PROFILE_ID, data.id);
-      state.published = true;
-      flashSaveStatus('published');
+      state.published = false;
+      flashSaveStatus('saved');
       return data;
+    }
+  }
+
+  async function setPublishFlag(publish) {
+    if (!state.myProfileId) {
+      flashSaveStatus('need-fill-first');
+      return false;
+    }
+    if (publish && !state.profile.avatar_url) {
+      flashSaveStatus('need-avatar');
+      return false;
+    }
+    const { error } = await supa
+      .from('profiles')
+      .update({ is_published: publish })
+      .eq('id', state.myProfileId)
+      .eq('owner_secret', MY_SECRET);
+    if (error) { console.warn('publish toggle err', error); flashSaveStatus('error'); return false; }
+    state.published = publish;
+    refreshPublishButton();
+    flashSaveStatus(publish ? 'published' : 'unpublished');
+    await reloadFeed();
+    return true;
+  }
+
+  function refreshPublishButton() {
+    const pubBtn = document.getElementById('publishBtn');
+    const unpubBtn = document.getElementById('unpublishBtn');
+    if (!pubBtn) return;
+    if (state.published) {
+      pubBtn.textContent = '✅ 公開中';
+      pubBtn.classList.add('published');
+      pubBtn.disabled = true;
+      if (unpubBtn) unpubBtn.style.display = '';
+    } else {
+      pubBtn.textContent = '📣 公開する';
+      pubBtn.classList.remove('published');
+      pubBtn.disabled = !state.myProfileId; // need draft saved first
+      if (unpubBtn) unpubBtn.style.display = 'none';
     }
   }
 
@@ -3163,6 +3470,20 @@
     document.getElementById('modalName').textContent = u.display_name || '';
     document.getElementById('modalBio').textContent = u.bio || 'まだ自己紹介はないみたい ✨';
 
+    // VRC link
+    const vrcLink = document.getElementById('modalVrcLink');
+    if (vrcLink) {
+      if (u.vrc_url && /^https?:\/\//i.test(u.vrc_url)) {
+        vrcLink.href = u.vrc_url;
+        vrcLink.textContent = 'VRChatプロフィール';
+        vrcLink.style.display = '';
+      } else {
+        vrcLink.removeAttribute('href');
+        vrcLink.textContent = '';
+        vrcLink.style.display = 'none';
+      }
+    }
+
     // Tags
     const tagsEl = document.getElementById('modalTags');
     const tags = u.tags || [];
@@ -3580,6 +3901,206 @@
     });
   }
 
+  // ===== Notifications =====
+  function setupNotifications() {
+    const bell = document.getElementById('notifBell');
+    const panel = document.getElementById('notifPanel');
+    const clearBtn = document.getElementById('npClearBtn');
+    if (!bell) return;
+
+    bell.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = panel.classList.toggle('open');
+      if (isOpen) {
+        // Mark all as read
+        clearBellBadge();
+      }
+      renderNotifPanel();
+    });
+    // Close panel on outside click
+    document.addEventListener('click', (e) => {
+      if (!panel.classList.contains('open')) return;
+      if (panel.contains(e.target) || bell.contains(e.target)) return;
+      panel.classList.remove('open');
+    });
+    if (clearBtn) {
+      clearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.notifications = [];
+        renderNotifPanel();
+        clearBellBadge();
+      });
+    }
+  }
+
+  function clearBellBadge() {
+    const badge = document.getElementById('bellBadge');
+    if (!badge) return;
+    badge.style.display = 'none';
+    badge.textContent = '0';
+  }
+
+  function bumpBellBadge() {
+    const badge = document.getElementById('bellBadge');
+    const bell = document.getElementById('notifBell');
+    if (!badge) return;
+    const current = parseInt(badge.textContent || '0', 10) || 0;
+    const next = current + 1;
+    badge.textContent = String(next);
+    badge.style.display = '';
+    bell.classList.remove('bump');
+    void bell.offsetWidth;
+    bell.classList.add('bump');
+  }
+
+  function renderNotifPanel() {
+    const list = document.getElementById('npList');
+    if (!list) return;
+    if (state.notifications.length === 0) {
+      list.innerHTML = '<div class="np-empty">まだお知らせはないよ ✨</div>';
+      return;
+    }
+    list.innerHTML = '';
+    // newest first
+    [...state.notifications].reverse().forEach(n => {
+      const u = state.allProfiles.find(p => p.id === n.peerId);
+      const item = document.createElement('div');
+      item.className = 'np-item';
+      const iconCls = n.type === 'chat' ? 'np-icon chat' : 'np-icon';
+      const icon = n.type === 'chat' ? '💬' : '♡';
+      const senderName = (u && u.display_name) || '誰か';
+      const text = n.type === 'chat'
+        ? `${senderName} からメッセージ`
+        : `${senderName} があなたに ♡ してくれたよ`;
+      item.innerHTML = `
+        <div class="${iconCls}">${icon}</div>
+        <div class="np-text">
+          <div class="np-msg">${escapeHTML(text)}</div>
+          <div class="np-sub">${escapeHTML(n.msg || '')}</div>
+        </div>
+      `;
+      item.addEventListener('click', () => {
+        document.getElementById('notifPanel').classList.remove('open');
+        if (n.type === 'chat' && n.peerId) {
+          openChatModal(n.peerId);
+        } else if (n.type === 'like' && n.peerId) {
+          openProfileModal(n.peerId);
+        }
+      });
+      list.appendChild(item);
+    });
+  }
+
+  function showToast(opts) {
+    const stack = document.getElementById('toastStack');
+    if (!stack) return;
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = `
+      <span class="t-ico">${opts.icon || '✨'}</span>
+      <div class="t-body">
+        <div class="t-title">${escapeHTML(opts.title || '')}</div>
+        <div class="t-msg">${escapeHTML(opts.msg || '')}</div>
+      </div>
+    `;
+    t.addEventListener('click', () => {
+      if (opts.onClick) opts.onClick();
+      removeToast(t);
+    });
+    stack.appendChild(t);
+    setTimeout(() => removeToast(t), 5000);
+  }
+
+  function removeToast(t) {
+    if (!t || !t.parentNode) return;
+    t.classList.add('fade-out');
+    setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+  }
+
+  // Subscribe to realtime: likes (someone likes me) and messages (someone messages me)
+  async function subscribeNotificationsRealtime() {
+    // Need myProfileId to receive likes; allow subscribing as soon as it's available.
+    // Set up channel re-subscription whenever myProfileId changes.
+    setupNotifChannel();
+  }
+
+  function setupNotifChannel() {
+    // Clean up previous
+    if (state.notifChannel) {
+      try { supa.removeChannel(state.notifChannel); } catch (e) {}
+      state.notifChannel = null;
+    }
+    if (!state.myProfileId) return;
+    const myId = state.myProfileId;
+    const channel = supa.channel('notif:' + myId)
+      .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'likes', filter: `to_profile=eq.${myId}` },
+        async (payload) => {
+          const row = payload.new;
+          if (!row) return;
+          // Resolve from_secret -> profile id
+          const { data: pRow } = await supa
+            .from('profiles')
+            .select('id, display_name, avatar_url')
+            .eq('owner_secret', row.from_secret)
+            .maybeSingle();
+          if (!pRow) return;
+          const peerId = pRow.id;
+          // Add to notifications (newest at end)
+          state.notifications.push({
+            type: 'like',
+            peerId,
+            msg: '',
+            at: new Date().toISOString()
+          });
+          bumpBellBadge();
+          showToast({
+            icon: '♡',
+            title: `${pRow.display_name || '誰か'} が ♡ してくれた！`,
+            msg: 'プロフィールをみてみよう',
+            onClick: () => openProfileModal(peerId)
+          });
+          // Refresh fed user lists / my page
+          await fetchLikedBy();
+          renderMyPage();
+        })
+      .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages', filter: `to_profile=eq.${myId}` },
+        async (payload) => {
+          const row = payload.new;
+          if (!row) return;
+          // Resolve from_secret -> profile
+          const { data: pRow } = await supa
+            .from('profiles')
+            .select('id, display_name, avatar_url')
+            .eq('owner_secret', row.from_secret)
+            .maybeSingle();
+          if (!pRow) return;
+          const peerId = pRow.id;
+          // If this chat is already open with this peer, skip toast/badge (the chat view already shows it)
+          if (state.chatPeerId === peerId) {
+            // Just refresh my page convo list when chat closes
+            return;
+          }
+          state.notifications.push({
+            type: 'chat',
+            peerId,
+            msg: row.body || '',
+            at: new Date().toISOString()
+          });
+          bumpBellBadge();
+          showToast({
+            icon: '💬',
+            title: `${pRow.display_name || '誰か'} からメッセージ`,
+            msg: row.body || '',
+            onClick: () => openChatModal(peerId)
+          });
+          renderMyPage();
+        })
+      .subscribe();
+    state.notifChannel = channel;
+  }
+
   // ===== Sparkle =====
   function showSparkle() {
     const sparkle = document.createElement('div');
@@ -3612,17 +4133,20 @@
     el.classList.add('flash');
     const span = el.querySelector('span:last-child');
     const ico = el.querySelector('.save-ico');
-    if (kind === 'saved') { span.textContent = '保存したよ ♡'; ico.textContent = '✨'; }
+    if (kind === 'saved') { span.textContent = '下書き保存したよ ♡'; ico.textContent = '✨'; }
     else if (kind === 'published') { span.textContent = '公開したよ！みんなの一覧に並んでる ♡'; ico.textContent = '🎉'; }
+    else if (kind === 'unpublished') { span.textContent = '非公開にしたよ（下書きは残ってるよ）'; ico.textContent = '🌱'; }
     else if (kind === 'error') { span.textContent = '保存に失敗… もう一度押してみてね'; ico.textContent = '⚠️'; }
-    else if (kind === 'need-avatar') { span.textContent = 'アイコン画像をアップロードしてね'; ico.textContent = '📷'; }
+    else if (kind === 'need-avatar') { span.textContent = '公開にはアイコン画像が必要だよ'; ico.textContent = '📷'; }
+    else if (kind === 'need-fill-first') { span.textContent = '先になまえを入れてね'; ico.textContent = '✏️'; }
     else if (kind === 'need-profile-for-chat') { span.textContent = '先にプロフィールを公開してね（なまえ＋アイコン）'; ico.textContent = '💬'; }
     clearTimeout(saveFlashTimer);
     saveFlashTimer = setTimeout(() => {
       el.classList.remove('flash');
       ico.textContent = '☁️';
-      if (state.published) span.textContent = 'みんなと共有されてるよ ✨';
-      else span.textContent = 'なまえを入れると、みんなの一覧に並ぶよ ✨';
+      if (state.published) span.textContent = '公開中だよ ✨ 編集はそのまま反映されるよ';
+      else if (state.myProfileId) span.textContent = '下書き保存中 ✨ 「公開する」で一覧に並ぶよ';
+      else span.textContent = 'なまえを入れると下書きが保存されるよ ✨';
     }, 1600);
   }
 
@@ -3632,12 +4156,16 @@
     const span = el.querySelector('span:last-child');
     const ico = el.querySelector('.save-ico');
     if (state.published) {
-      span.textContent = 'みんなと共有されてるよ ✨';
+      span.textContent = '公開中だよ ✨ 編集はそのまま反映されるよ';
       ico.textContent = '☁️';
+    } else if (state.myProfileId) {
+      span.textContent = '下書き保存中 ✨ 「公開する」で一覧に並ぶよ';
+      ico.textContent = '📝';
     } else {
-      span.textContent = 'なまえを入れると、みんなの一覧に並ぶよ ✨';
+      span.textContent = 'なまえを入れると下書きが保存されるよ ✨';
       ico.textContent = '✏️';
     }
+    refreshPublishButton();
   }
 
   // ===== Profile inputs =====
@@ -3663,9 +4191,11 @@
   function setupProfileInputs() {
     const nameInp = document.getElementById('inpName');
     const bioInp  = document.getElementById('inpBio');
+    const vrcInp  = document.getElementById('inpVrcUrl');
 
     nameInp.value = state.profile.display_name;
     bioInp.value  = state.profile.bio || '';
+    if (vrcInp) vrcInp.value = state.profile.vrc_url || '';
 
     nameInp.addEventListener('input', e => {
       state.profile.display_name = e.target.value;
@@ -3685,8 +4215,31 @@
       bioInp.style.height = bioInp.scrollHeight + 'px';
     }
 
+    if (vrcInp) {
+      vrcInp.addEventListener('input', e => {
+        state.profile.vrc_url = e.target.value;
+        debouncedSaveProfile();
+      });
+    }
+
     setupCounter('inpName', 'nameCount', 20);
-    setupCounter('inpBio',  'bioCount',  80);
+    setupCounter('inpBio',  'bioCount',  160);
+
+    // Publish / unpublish buttons
+    const pubBtn = document.getElementById('publishBtn');
+    const unpubBtn = document.getElementById('unpublishBtn');
+    if (pubBtn) {
+      pubBtn.addEventListener('click', async () => {
+        await setPublishFlag(true);
+      });
+    }
+    if (unpubBtn) {
+      unpubBtn.addEventListener('click', async () => {
+        if (!confirm('プロフィールを非公開にしますか？\n（下書きは残るので、また「公開する」で戻せるよ）')) return;
+        await setPublishFlag(false);
+      });
+    }
+    refreshPublishButton();
   }
 
   function setupCounter(inputId, counterId, max) {
@@ -3888,8 +4441,9 @@
     document.getElementById('inpName').value = '';
     document.getElementById('inpBio').value = '';
     document.getElementById('inpBio').style.height = 'auto';
+    { const v = document.getElementById('inpVrcUrl'); if (v) v.value = ''; }
     document.getElementById('nameCount').textContent = '0 / 20';
-    document.getElementById('bioCount').textContent = '0 / 80';
+    document.getElementById('bioCount').textContent = '0 / 160';
     saveUI();
     refreshAvatarUI();
     renderTagCloud();
@@ -3928,8 +4482,9 @@
     document.getElementById('inpName').value = '';
     document.getElementById('inpBio').value = '';
     document.getElementById('inpBio').style.height = 'auto';
+    { const v = document.getElementById('inpVrcUrl'); if (v) v.value = ''; }
     document.getElementById('nameCount').textContent = '0 / 20';
-    document.getElementById('bioCount').textContent = '0 / 80';
+    document.getElementById('bioCount').textContent = '0 / 160';
     saveUI();
     refreshAvatarUI();
     renderTagCloud();
@@ -3986,10 +4541,11 @@
         display_name: mine.display_name || '',
         bio: mine.bio || '',
         avatar_url: mine.avatar_url || '',
+        vrc_url: mine.vrc_url || '',
         status: mine.status || 'online',
         tags: mine.tags || []
       };
-      state.published = true;
+      state.published = !!mine.is_published;
       // sync selectedTags from my profile
       state.selectedTags = new Set(mine.tags || []);
     } else {
@@ -4012,6 +4568,7 @@
     setupAvatarUploader();
     setupProfileModal();
     setupChatModal();
+    setupNotifications();
     refreshAvatarUI();
     renderTagCloud();
     renderPreview();
@@ -4019,6 +4576,7 @@
     updateFavCounter();
     renderMyPage();
     refreshSaveStatusBaseline();
+    subscribeNotificationsRealtime();
   }
 
   loadInitial();
@@ -4037,6 +4595,7 @@
       <div class="modal-body">
         <div class="modal-name" id="modalName"></div>
         <div class="modal-bio" id="modalBio"></div>
+        <a id="modalVrcLink" class="modal-vrc-link" target="_blank" rel="noopener noreferrer" style="display:none;"></a>
         <div class="modal-tags" id="modalTags"></div>
         <div class="modal-stats">
           <div class="modal-stat">
@@ -4080,6 +4639,20 @@
       </div>
     </div>
   </div>
+
+  <!-- Notification panel -->
+  <div class="notif-panel" id="notifPanel" role="dialog" aria-label="お知らせ">
+    <div class="np-header">
+      <span>お知らせ</span>
+      <button type="button" class="np-clear" id="npClearBtn">すべてクリア</button>
+    </div>
+    <div class="np-list" id="npList">
+      <div class="np-empty">まだお知らせはないよ ✨</div>
+    </div>
+  </div>
+
+  <!-- Toast stack -->
+  <div class="toast-stack" id="toastStack"></div>
 
 </body>
 </html>
