@@ -1,0 +1,2168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ぽこっと — VRChatのおともだち、ぽこっとみつけよ。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Klee+One:wght@600&family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root {
+    --bg: #fff5f1;
+    --bg-soft: #fef0ea;
+    --bg-warm: #ffe4d6;
+    --card: #ffffff;
+    --card-cream: #fff9f3;
+    --ink: #5a3a3a;
+    --ink-soft: #8a6868;
+    --ink-mute: #b89898;
+    --line: #ffd8c8;
+    --line-soft: #ffe8dc;
+    --peach: #ffb3a0;
+    --peach-deep: #ff8e6e;
+    --peach-light: #ffd7c8;
+    --pink: #ffa3c0;
+    --pink-deep: #ff7aa8;
+    --pink-light: #ffd6e3;
+    --cream: #ffe8c4;
+    --cream-deep: #ffc97a;
+    --mint: #b8e8d4;
+    --mint-deep: #6cc9a0;
+    --lavender: #d9c8ff;
+    --lavender-deep: #a587e8;
+    --sky: #c2e0ff;
+
+    --shadow-soft: 0 4px 16px rgba(255, 142, 110, 0.12);
+    --shadow-pop: 0 8px 32px rgba(255, 142, 110, 0.18);
+    --shadow-card: 0 12px 40px rgba(255, 122, 168, 0.2);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'M PLUS Rounded 1c', 'Hiragino Maru Gothic ProN', sans-serif;
+    background: var(--bg);
+    background-image:
+      radial-gradient(at 10% 10%, rgba(255, 163, 192, 0.15) 0%, transparent 50%),
+      radial-gradient(at 90% 50%, rgba(217, 200, 255, 0.12) 0%, transparent 50%),
+      radial-gradient(at 30% 90%, rgba(184, 232, 212, 0.1) 0%, transparent 50%);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      radial-gradient(circle at 12% 20%, var(--pink-light) 0, var(--pink-light) 4px, transparent 4px),
+      radial-gradient(circle at 88% 35%, var(--cream) 0, var(--cream) 5px, transparent 5px),
+      radial-gradient(circle at 25% 75%, var(--lavender) 0, var(--lavender) 4px, transparent 4px),
+      radial-gradient(circle at 92% 80%, var(--mint) 0, var(--mint) 4px, transparent 4px),
+      radial-gradient(circle at 55% 15%, var(--peach-light) 0, var(--peach-light) 3px, transparent 3px);
+    opacity: 0.6;
+  }
+
+  main, header, footer { position: relative; z-index: 1; }
+
+  .maru { font-family: 'Zen Maru Gothic', sans-serif; }
+
+  /* ===== Header ===== */
+  header {
+    background: rgba(255, 245, 241, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 2px dashed var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  .logo-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink), var(--peach));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(255, 142, 110, 0.3);
+  }
+  .logo-mark::before, .logo-mark::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 8px;
+    background: var(--ink);
+    border-radius: 50% 50% 40% 40%;
+    top: 12px;
+  }
+  .logo-mark::before { left: 11px; }
+  .logo-mark::after { right: 11px; }
+
+  .logo-mark .mouth {
+    position: absolute;
+    bottom: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 4px;
+    border: 1.5px solid var(--ink);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .logo-mark .cheek {
+    position: absolute;
+    width: 5px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--pink-deep);
+    top: 19px;
+    opacity: 0.7;
+  }
+  .logo-mark .cheek.l { left: 5px; }
+  .logo-mark .cheek.r { right: 5px; }
+
+  .logo-text {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+
+  .logo-text .sub {
+    font-size: 10px;
+    color: var(--ink-mute);
+    font-weight: 500;
+    display: block;
+    line-height: 1;
+    margin-top: -2px;
+  }
+
+  nav ul {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: var(--ink-soft);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 999px;
+    transition: all 0.2s;
+  }
+
+  nav a:hover { background: var(--pink-light); color: var(--ink); }
+  nav a.is-active { background: var(--peach); color: white; }
+
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+
+  .fav-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+  }
+  .fav-counter .fav-heart {
+    color: var(--pink-deep);
+    font-size: 16px;
+    line-height: 1;
+  }
+  .fav-counter .fav-num {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 900;
+    color: var(--ink);
+    font-size: 14px;
+    min-width: 12px;
+  }
+  .fav-counter:hover { border-color: var(--pink-deep); background: var(--pink-light); }
+  .fav-counter.has-favs { background: var(--pink-light); border-color: var(--pink); }
+  .fav-counter.bump { animation: favBump 0.4s ease; }
+  @keyframes favBump {
+    0%, 100% { transform: scale(1); }
+    40% { transform: scale(1.15); }
+  }
+
+  .btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .btn-ghost {
+    background: white;
+    color: var(--ink);
+    border: 2px solid var(--line);
+  }
+  .btn-ghost:hover { border-color: var(--peach); color: var(--peach-deep); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--peach), var(--pink));
+    color: white;
+    box-shadow: 0 4px 14px rgba(255, 122, 168, 0.4);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 122, 168, 0.5);
+  }
+
+  /* ===== Hero (compact) ===== */
+  .hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 24px 30px;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero-badges {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    border: 2px solid var(--peach-light);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--peach-deep);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .hero-badge.badge-cream {
+    background: var(--cream);
+    border-color: var(--cream-deep);
+    color: #a87344;
+  }
+
+  .hero-badge.badge-mint {
+    background: var(--mint);
+    border-color: var(--mint-deep);
+    color: #2f8a64;
+  }
+
+  .hero-badge .dot-anim {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--peach-deep);
+    box-shadow: 0 0 0 4px rgba(255, 142, 110, 0.25);
+    animation: blink 1.6s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .hero h1 {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: clamp(32px, 4.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.3;
+    margin-bottom: 18px;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+
+  .hero h1 .pop {
+    display: inline-block;
+    background: var(--peach);
+    color: white;
+    padding: 0 12px;
+    border-radius: 12px;
+    transform: rotate(-2deg);
+    margin: 4px 2px;
+    box-shadow: 0 4px 0 var(--peach-deep);
+  }
+
+  .hero h1 .underline {
+    background: linear-gradient(transparent 65%, var(--cream) 65%);
+    padding: 0 2px;
+  }
+
+  .hero h1 .heart {
+    display: inline-block;
+    color: var(--pink-deep);
+    animation: heartbeat 1.8s ease-in-out infinite;
+  }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.2); }
+    60% { transform: scale(0.95); }
+  }
+
+  .hero p {
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ===== Tag filter (the main matching mechanism) ===== */
+  .profile-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 24px 30px;
+  }
+
+  .profile-frame {
+    background: white;
+    border-radius: 28px;
+    padding: 28px 32px 24px;
+    box-shadow: var(--shadow-soft);
+    border: 2px dashed var(--line);
+    position: relative;
+  }
+
+  .profile-frame-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .step-pill {
+    display: inline-block;
+    background: var(--peach);
+    color: white;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .profile-frame-head h3 {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .profile-frame-head .hint {
+    font-size: 12px;
+    color: var(--ink-mute);
+    margin-top: 2px;
+  }
+
+  .heart-em-sm {
+    color: var(--pink-deep);
+    display: inline-block;
+    animation: bounce 2s ease-in-out infinite;
+    font-size: 18px;
+  }
+
+  .profile-frame-head .reset {
+    font-family: inherit;
+    background: white;
+    border: 2px solid var(--line);
+    color: var(--ink-mute);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .profile-frame-head .reset:hover { color: var(--peach-deep); border-color: var(--peach); }
+
+  .profile-edit-grid {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* preview pane (sticky-ish) */
+  .preview-pane {
+    position: sticky;
+    top: 90px;
+  }
+
+  .preview-label {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--peach-deep);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .preview-card {
+    background: white;
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: var(--shadow-pop);
+    border: 3px solid var(--peach-light);
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .preview-card .pick-av {
+    margin: 14px auto 12px;
+  }
+
+  .preview-card .pick-bio {
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+
+  .preview-card .pick-tags { min-height: 28px; justify-content: center; }
+
+  .preview-card .online {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: white;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--mint-deep);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    z-index: 2;
+  }
+  .preview-card .online::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: var(--mint-deep);
+    border-radius: 50%;
+  }
+  .preview-card .online.off { color: var(--ink-mute); }
+  .preview-card .online.off::before { background: var(--ink-mute); }
+
+  .preview-card .pick-av {
+    width: 90px;
+    height: 90px;
+    font-size: 44px;
+    background: linear-gradient(135deg, var(--peach-light), var(--pink-light));
+    margin-top: 24px;
+  }
+
+  .preview-card .pick-name { font-size: 16px; }
+  .preview-card .pick-bio { font-size: 11px; height: auto; min-height: 32px; }
+
+  .pick-tag.muted {
+    background: white;
+    color: var(--ink-mute);
+    border: 1px dashed var(--line);
+  }
+
+  /* Form pane */
+  .form-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .field {
+    position: relative;
+  }
+
+  .field-label {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .field-num {
+    background: var(--peach);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .field-title {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--ink);
+  }
+
+  .field-sub {
+    font-size: 11px;
+    color: var(--ink-mute);
+    font-weight: 500;
+  }
+
+  .field-input {
+    width: 100%;
+    background: var(--bg-soft);
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .field-input::placeholder { color: var(--ink-mute); font-weight: 400; }
+  .field-input:focus {
+    background: white;
+    border-color: var(--peach);
+    box-shadow: 0 0 0 4px var(--peach-light);
+  }
+
+  .field-textarea {
+    resize: none;
+    line-height: 1.6;
+    min-height: 60px;
+  }
+
+  .field-counter {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    font-size: 10px;
+    color: var(--ink-mute);
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-weight: 700;
+    background: white;
+    padding: 1px 8px;
+    border-radius: 999px;
+    pointer-events: none;
+  }
+  .field-counter.warn { color: var(--peach-deep); }
+
+  .badge-mini {
+    display: inline-flex;
+    align-items: center;
+    background: var(--pink-light);
+    color: var(--pink-deep);
+    font-size: 11px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-weight: 800;
+    margin-left: 4px;
+  }
+
+  /* Emoji picker */
+  .emoji-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .emoji-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    border: 2px solid transparent;
+    background: var(--bg-soft);
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-family: inherit;
+    padding: 0;
+  }
+  .emoji-btn:hover { background: var(--pink-light); transform: translateY(-2px); }
+  .emoji-btn.active {
+    background: linear-gradient(135deg, var(--peach-light), var(--pink-light));
+    border-color: var(--pink);
+    box-shadow: 0 4px 10px rgba(255, 122, 168, 0.25);
+    transform: translateY(-2px) scale(1.05);
+  }
+
+  /* Status picker */
+  .status-picker {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .status-btn {
+    background: var(--bg-soft);
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .status-btn:hover { background: var(--pink-light); color: var(--ink); }
+  .status-btn.active {
+    background: white;
+    border-color: var(--peach);
+    color: var(--ink);
+    box-shadow: 0 4px 10px rgba(255, 142, 110, 0.2);
+  }
+
+  .status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .online-dot { background: var(--mint-deep); box-shadow: 0 0 0 3px rgba(108, 201, 160, 0.25); }
+  .busy-dot { background: var(--peach-deep); box-shadow: 0 0 0 3px rgba(255, 142, 110, 0.25); }
+  .off-dot { background: var(--ink-mute); }
+
+  .save-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 2px dashed var(--line-soft);
+    font-size: 12px;
+    color: var(--mint-deep);
+    font-weight: 700;
+  }
+  .save-status.flash { color: var(--peach-deep); }
+  .save-status .save-ico { font-size: 14px; }
+
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag-pill {
+    background: var(--bg-soft);
+    color: var(--ink-soft);
+    border: 2px solid transparent;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tag-pill:hover {
+    background: var(--pink-light);
+    color: var(--ink);
+  }
+
+  .tag-pill.active {
+    background: linear-gradient(135deg, var(--peach), var(--pink));
+    color: white;
+    border-color: var(--pink-deep);
+    box-shadow: 0 4px 10px rgba(255, 122, 168, 0.3);
+    transform: translateY(-1px);
+  }
+
+  .tag-pill.active::before {
+    content: '✓ ';
+    font-weight: 900;
+  }
+
+  /* ===== Home grid (MAIN) ===== */
+  .home-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 24px 60px;
+  }
+
+  .home-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .home-head .left h2 {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .home-head .left h2 .heart-em {
+    color: var(--pink-deep);
+    display: inline-block;
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .home-head .left p {
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+
+  .sort-pills {
+    display: flex;
+    gap: 6px;
+    background: white;
+    padding: 4px;
+    border-radius: 999px;
+    box-shadow: var(--shadow-soft);
+    border: 2px solid var(--line-soft);
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .fav-only {
+    background: white;
+    border: 2px solid var(--line-soft);
+    border-radius: 999px;
+    padding: 7px 16px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-mute);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.2s;
+  }
+  .fav-only span { color: var(--ink-mute); font-size: 14px; }
+  .fav-only:hover { border-color: var(--pink); color: var(--pink-deep); }
+  .fav-only:hover span { color: var(--pink-deep); }
+  .fav-only[aria-pressed="true"] {
+    background: var(--pink-light);
+    border-color: var(--pink);
+    color: var(--pink-deep);
+  }
+  .fav-only[aria-pressed="true"] span { color: var(--pink-deep); }
+
+  .sort-pill {
+    background: transparent;
+    border: none;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-mute);
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .sort-pill.active {
+    background: var(--peach);
+    color: white;
+  }
+  .sort-pill:not(.active):hover { color: var(--ink); }
+
+  /* Match results count */
+  .match-count {
+    background: var(--cream);
+    color: var(--peach-deep);
+    padding: 12px 20px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .match-count strong {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+  }
+
+  /* The card grid */
+  .pick-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .pick-card {
+    background: white;
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: var(--shadow-soft);
+    border: 3px solid white;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+  }
+
+  .pick-card:hover {
+    transform: translateY(-6px) rotate(-1deg);
+    box-shadow: var(--shadow-pop);
+    border-color: var(--peach-light);
+  }
+
+  .pick-card .heart-fav {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+    color: var(--ink-mute);
+    z-index: 2;
+  }
+  .pick-card .heart-fav.faved { color: var(--pink-deep); background: var(--pink-light); }
+  .pick-card .heart-fav:hover { transform: scale(1.1); }
+
+  .pick-card .online {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: white;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--mint-deep);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    z-index: 2;
+  }
+  .pick-card .online::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: var(--mint-deep);
+    border-radius: 50%;
+  }
+  .pick-card .online.off { color: var(--ink-mute); }
+  .pick-card .online.off::before { background: var(--ink-mute); }
+
+  .pick-av {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 14px auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    border: 4px solid white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  }
+
+  .pick-name {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+
+  .pick-bio {
+    font-size: 11px;
+    color: var(--ink-mute);
+    font-weight: 500;
+    margin-bottom: 12px;
+    height: 32px;
+    overflow: hidden;
+    line-height: 1.4;
+  }
+
+  .pick-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+    margin-bottom: 14px;
+    min-height: 44px;
+    align-content: flex-start;
+  }
+
+  .pick-tag {
+    background: var(--bg-soft);
+    color: var(--ink-mute);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    transition: all 0.2s;
+  }
+
+  .pick-tag.match {
+    background: var(--pink-light);
+    color: var(--pink-deep);
+    box-shadow: 0 2px 4px rgba(255, 122, 168, 0.15);
+  }
+
+  .pick-compat {
+    background: var(--bg-soft);
+    padding: 8px 0;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
+  .pick-compat .num {
+    color: var(--peach-deep);
+    font-weight: 900;
+    font-size: 17px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+  .pick-compat .shared {
+    display: block;
+    font-size: 10px;
+    color: var(--ink-mute);
+    margin-top: 2px;
+  }
+
+  .pick-cta {
+    background: linear-gradient(135deg, var(--peach), var(--pink));
+    color: white;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(255, 122, 168, 0.3);
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .pick-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(255, 122, 168, 0.4); }
+
+  .pick-cta.done {
+    background: var(--mint-deep);
+    box-shadow: none;
+  }
+
+  /* Empty state */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 24px;
+    border: 3px dashed var(--line);
+  }
+  .empty-state .emo {
+    font-size: 60px;
+    margin-bottom: 12px;
+    opacity: 0.7;
+  }
+  .empty-state h4 {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 18px;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .empty-state p {
+    font-size: 13px;
+    color: var(--ink-mute);
+  }
+
+  /* ===== Small section: how it works ===== */
+  .how-section {
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 24px;
+  }
+
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .how-card {
+    background: white;
+    border-radius: 24px;
+    padding: 28px 24px;
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    border: 3px solid white;
+    transition: all 0.3s;
+  }
+
+  .how-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--peach-light);
+  }
+
+  .how-step {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--peach), var(--pink));
+    color: white;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 900;
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    box-shadow: 0 4px 10px rgba(255, 122, 168, 0.3);
+  }
+
+  .how-emo {
+    font-size: 48px;
+    margin: 6px 0 12px;
+  }
+
+  .how-card h4 {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .how-card p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    background: linear-gradient(135deg, var(--peach-light), var(--pink-light), var(--lavender));
+    margin-top: 60px;
+    padding: 60px 24px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  footer::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: var(--bg);
+    border-radius: 0 0 50% 50%/0 0 100% 100%;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .foot-brand p {
+    color: var(--ink-soft);
+    margin-top: 16px;
+    font-size: 14px;
+    max-width: 280px;
+  }
+
+  footer h5 {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+
+  footer ul { list-style: none; }
+  footer li { padding: 4px 0; }
+  footer a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  footer a:hover { color: var(--peach-deep); }
+
+  .foot-bottom {
+    max-width: 1200px;
+    margin: 40px auto 0;
+    padding-top: 24px;
+    border-top: 2px dashed rgba(255, 255, 255, 0.6);
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .pick-grid { grid-template-columns: repeat(3, 1fr); }
+    .profile-edit-grid { grid-template-columns: 220px 1fr; gap: 24px; }
+  }
+
+  @media (max-width: 720px) {
+    .hero { padding: 30px 20px 20px; }
+    .pick-grid { grid-template-columns: repeat(2, 1fr); }
+    .how-grid { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 24px; }
+    nav ul { display: none; }
+    .profile-frame { padding: 20px; }
+    .profile-edit-grid { grid-template-columns: 1fr; gap: 24px; }
+    .preview-pane { position: static; max-width: 280px; margin: 0 auto; }
+  }
+
+  @media (max-width: 460px) {
+    .pick-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Entrance anim */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero > * { animation: rise 0.7s ease both; }
+  .hero h1 { animation-delay: 0.1s; }
+  .hero p { animation-delay: 0.2s; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">
+        <span class="cheek l"></span>
+        <span class="cheek r"></span>
+        <span class="mouth"></span>
+      </span>
+      <span class="logo-text">ぽこっと<span class="sub">poco.tto · vrc</span></span>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="#" class="is-active">ホーム</a></li>
+        <li><a href="#favs-anchor">お気に入り</a></li>
+        <li><a href="#how-anchor">使い方</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <button class="btn btn-ghost fav-counter" id="favCounter" type="button" title="お気に入りした子">
+        <span class="fav-heart">♡</span>
+        <span class="fav-num" id="favNum">0</span>
+      </button>
+      <button class="btn btn-ghost" id="resetAllBtn" type="button" title="全部リセット">↺&nbsp;リセット</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ===== HERO (compact) ===== -->
+<section class="hero">
+  <div class="hero-badges">
+    <span class="hero-badge"><span class="dot-anim"></span><span id="online-count">8</span>人 がオンライン中だよ</span>
+    <span class="hero-badge badge-cream">🔓&nbsp;アカウント登録なしでOK</span>
+    <span class="hero-badge badge-mint">☁️&nbsp;みんなと共有</span>
+  </div>
+  <h1>
+    VRChatの<span class="pop">おともだち</span>、<br>
+    <span class="underline">ぽこっと</span>みつけよ。<span class="heart">♡</span>
+  </h1>
+  <p>好きなことのタグを選ぶだけ。アカウント作成も会員登録もいらないよ。プロフを書けばみんなの一覧に並んで、共通の趣味があるVRChat友だちが、ぽこっと見つかる！</p>
+</section>
+
+<!-- ===== Profile editor ===== -->
+<section class="profile-section" id="profile-anchor">
+  <div class="profile-frame">
+    <div class="profile-frame-head">
+      <div>
+        <span class="step-pill">STEP 1</span>
+        <h3>あなたのプロフィールをつくろう <span class="heart-em-sm">♡</span></h3>
+        <p class="hint">埋まったところから、ぴったりの子が下に並ぶよ ✨</p>
+      </div>
+      <button class="reset" id="resetProfile" type="button">プロフをリセット</button>
+    </div>
+
+    <div class="profile-edit-grid">
+      <!-- preview card -->
+      <div class="preview-pane">
+        <div class="preview-label">こんな風に見えるよ ↓</div>
+        <div class="preview-card" id="previewCard">
+          <span class="online" id="prevOnline">online</span>
+          <div class="pick-av" id="prevAv">🍀</div>
+          <div class="pick-name" id="prevName">なまえみほん</div>
+          <div class="pick-bio" id="prevBio">ここに自己紹介が入るよ〜！</div>
+          <div class="pick-tags" id="prevTags">
+            <span class="pick-tag muted">#タグを選んでね</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- form -->
+      <div class="form-pane">
+
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">①</span>
+            <span class="field-title">なまえ</span>
+            <span class="field-sub">VRChatでの呼ばれ方でOK</span>
+          </label>
+          <input type="text" class="field-input" id="inpName" maxlength="20" placeholder="例：もも">
+          <div class="field-counter" id="nameCount">0 / 20</div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">②</span>
+            <span class="field-title">アイコン</span>
+            <span class="field-sub">えもじから選んでね</span>
+          </label>
+          <div class="emoji-picker" id="emojiPicker">
+            <!-- emojis inserted by JS -->
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">③</span>
+            <span class="field-title">じこしょうかい</span>
+            <span class="field-sub">ひとことで自由にどうぞ</span>
+          </label>
+          <textarea class="field-input field-textarea" id="inpBio" maxlength="80" rows="2" placeholder="例：写真撮るのが好きです！おさんぽしよ〜"></textarea>
+          <div class="field-counter" id="bioCount">0 / 80</div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">④</span>
+            <span class="field-title">すきなこと</span>
+            <span class="field-sub">いくつでもOK <span class="badge-mini" id="selCount">0</span> 個えらんだよ</span>
+          </label>
+          <div class="tag-cloud" id="tagCloud">
+            <!-- tags inserted by JS -->
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">⑤</span>
+            <span class="field-title">いまの状態</span>
+            <span class="field-sub">VRChatに入ってる？</span>
+          </label>
+          <div class="status-picker">
+            <button class="status-btn active" data-status="online" type="button">
+              <span class="status-dot online-dot"></span>online
+            </button>
+            <button class="status-btn" data-status="busy" type="button">
+              <span class="status-dot busy-dot"></span>busy
+            </button>
+            <button class="status-btn" data-status="off" type="button">
+              <span class="status-dot off-dot"></span>おやすみ
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="save-status" id="saveStatus">
+      <span class="save-ico">☁️</span>
+      <span>みんなと共有されるよ ✨</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MAIN: Home picks ===== -->
+<section class="home-section" id="favs-anchor">
+  <div class="home-head">
+    <div class="left">
+      <h2>あなたにおすすめのお友だち <span class="heart-em">♡</span></h2>
+      <p>選んだタグと相性のいい順に並んでるよ。気になる子がいたら「♡いいねする」してみよう！</p>
+    </div>
+    <div class="filter-group">
+      <button class="fav-only" id="favOnlyBtn" type="button" aria-pressed="false">
+        <span>♡</span>お気に入りだけ
+      </button>
+      <div class="sort-pills">
+        <button class="sort-pill active" data-sort="match">相性順</button>
+        <button class="sort-pill" data-sort="online">オンライン順</button>
+        <button class="sort-pill" data-sort="new">新着順</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="match-count" id="matchCount">
+    <span>タグを選ぶと、ぴったりの子が見つかるよ</span>
+  </div>
+
+  <div class="pick-grid" id="pickGrid">
+    <!-- cards inserted by JS -->
+  </div>
+</section>
+
+<!-- ===== How it works ===== -->
+<section class="how-section" id="how-anchor">
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-step">STEP 1</div>
+      <div class="how-emo">🏷️</div>
+      <h4>タグを選ぶ</h4>
+      <p>すきなVRChatの過ごし方や趣味のタグを、いくつでも選んでね</p>
+    </div>
+    <div class="how-card">
+      <div class="how-step">STEP 2</div>
+      <div class="how-emo">💞</div>
+      <h4>ぴったりが出る</h4>
+      <p>共通タグが多い人ほど上に表示。相性度も%で出るよ</p>
+    </div>
+    <div class="how-card">
+      <div class="how-step">STEP 3</div>
+      <div class="how-emo">💌</div>
+      <h4>声をかけてみる</h4>
+      <p>気になったら「♡いいね」して、トークでお話ししてみよう</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="foot-brand">
+      <a href="#" class="logo">
+        <span class="logo-mark">
+          <span class="cheek l"></span>
+          <span class="cheek r"></span>
+          <span class="mouth"></span>
+        </span>
+        <span class="logo-text">ぽこっと<span class="sub">poco.tto · vrc</span></span>
+      </a>
+      <p>VRChatのおともだちが、ぽこっと見つかる。趣味タグでぴったりの相手と出会えるマッチングサービスです♡</p>
+    </div>
+    <div>
+      <h5>サービス</h5>
+      <ul>
+        <li><a href="#">マッチング</a></li>
+        <li><a href="#">トーク</a></li>
+        <li><a href="#">使い方ガイド</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>サポート</h5>
+      <ul>
+        <li><a href="#">よくある質問</a></li>
+        <li><a href="#">安全への取り組み</a></li>
+        <li><a href="#">お問い合わせ</a></li>
+        <li><a href="#">通報・ブロック</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>会社</h5>
+      <ul>
+        <li><a href="#">利用規約</a></li>
+        <li><a href="#">プライバシー</a></li>
+        <li><a href="#">運営会社</a></li>
+        <li><a href="#">X（Twitter）</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    © 2026 ぽこっと — made with ♡ for VRChat
+  </div>
+</footer>
+
+<script>
+  // ============================================================
+  // ぽこっと v3 — Supabase backend edition
+  // ============================================================
+  const SUPABASE_URL = 'https://fwgdzqafmihadguhqqid.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_fDsu1i_Di8iiDqUD7xyfKA_fp6TUp4V';
+  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  // ===== Constants =====
+  const ALL_TAGS = [
+    '写真', '集会', 'おさんぽ', 'カフェ', '改変', 'シェーダー',
+    '寝落ち', '無言', '声出す', 'ダンス', '音楽', 'DJ',
+    'お絵描き', 'ものづくり', 'ワールド巡り', 'ゲーム',
+    '夜型', '朝型', '映画鑑賞', 'おしゃべり', '読書', '料理',
+    'コスプレ', 'バーチャル撮影', 'クリエイター', 'はじめてさん歓迎'
+  ];
+
+  const EMOJI_CHOICES = ['🍑','🌷','🐰','🌻','☕','🌙','🎀','🌟','🍀','🧸','🍓','🦋','🌸','🍰','☁️','🐱'];
+  const DEFAULT_PROFILE = { display_name: '', bio: '', avatar_emoji: '🍀', status: 'online', tags: [] };
+
+  // Avatar background palette (deterministic from id hash)
+  const BG_PALETTE = [
+    'linear-gradient(135deg,var(--peach-light),var(--peach))',
+    'linear-gradient(135deg,var(--lavender),var(--pink-light))',
+    'linear-gradient(135deg,var(--mint),var(--cream))',
+    'linear-gradient(135deg,var(--cream-deep),var(--peach))',
+    'linear-gradient(135deg,var(--cream),var(--peach-light))',
+    'linear-gradient(135deg,var(--lavender),var(--sky))',
+    'linear-gradient(135deg,var(--pink-light),var(--pink))',
+    'linear-gradient(135deg,var(--sky),var(--lavender))'
+  ];
+
+  function pickBg(id) {
+    let h = 0;
+    for (const c of String(id)) h = (h * 31 + c.charCodeAt(0)) & 0x7fffffff;
+    return BG_PALETTE[h % BG_PALETTE.length];
+  }
+
+  // ===== Local secret + profile id =====
+  const KEY_SECRET = 'pocotto:secret';
+  const KEY_PROFILE_ID = 'pocotto:profile_id';
+
+  function getOrCreateSecret() {
+    let s = localStorage.getItem(KEY_SECRET);
+    if (!s) {
+      // random 32-char hex
+      const a = new Uint8Array(16);
+      crypto.getRandomValues(a);
+      s = [...a].map(b => b.toString(16).padStart(2,'0')).join('');
+      localStorage.setItem(KEY_SECRET, s);
+    }
+    return s;
+  }
+
+  const MY_SECRET = getOrCreateSecret();
+
+  // ===== State =====
+  const state = {
+    selectedTags: new Set(),    // タグ選択（マッチング用）
+    profile: { ...DEFAULT_PROFILE },  // 自分のプロフィール（DB と同期）
+    myProfileId: localStorage.getItem(KEY_PROFILE_ID) || null,
+    allProfiles: [],            // 全員のプロフィール（自分含む）
+    myLikes: new Set(),         // 自分が like した profile_id の集合
+    myFavs: new Set(),          // 自分が fav した profile_id の集合
+    sort: 'match',
+    favOnly: false,
+    loading: false,
+    published: false            // 自分のプロフィールが既にDBに保存されているか
+  };
+
+  // Persist UI-only state (sort/favOnly + tag selections) locally
+  const KEY_UI = 'pocotto:ui';
+  function loadUI() {
+    try {
+      const raw = localStorage.getItem(KEY_UI);
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (Array.isArray(d.selectedTags)) state.selectedTags = new Set(d.selectedTags);
+      if (typeof d.sort === 'string') state.sort = d.sort;
+      if (typeof d.favOnly === 'boolean') state.favOnly = d.favOnly;
+    } catch (e) {}
+  }
+  function saveUI() {
+    try {
+      localStorage.setItem(KEY_UI, JSON.stringify({
+        selectedTags: [...state.selectedTags],
+        sort: state.sort,
+        favOnly: state.favOnly
+      }));
+    } catch (e) {}
+  }
+
+  // ===== Supabase calls =====
+  async function fetchAllProfiles() {
+    const { data, error } = await supa
+      .from('profiles_with_counts')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) { console.warn('fetchAllProfiles error', error); return []; }
+    return data || [];
+  }
+
+  async function fetchMyProfile() {
+    if (!state.myProfileId) return null;
+    const { data, error } = await supa
+      .from('profiles')
+      .select('*')
+      .eq('id', state.myProfileId)
+      .eq('owner_secret', MY_SECRET)
+      .maybeSingle();
+    if (error) { console.warn('fetchMyProfile error', error); return null; }
+    return data;
+  }
+
+  async function fetchMyInteractions() {
+    const [likesRes, favsRes] = await Promise.all([
+      supa.from('likes').select('to_profile').eq('from_secret', MY_SECRET),
+      supa.from('favs' ).select('to_profile').eq('from_secret', MY_SECRET)
+    ]);
+    if (likesRes.error) console.warn('likes fetch err', likesRes.error);
+    if (favsRes.error)  console.warn('favs fetch err',  favsRes.error);
+    state.myLikes = new Set((likesRes.data || []).map(r => r.to_profile));
+    state.myFavs  = new Set((favsRes.data  || []).map(r => r.to_profile));
+  }
+
+  async function upsertMyProfile() {
+    // require display_name
+    const p = state.profile;
+    if (!p.display_name || !p.display_name.trim()) return null;
+
+    if (state.myProfileId) {
+      // UPDATE existing
+      const { data, error } = await supa
+        .from('profiles')
+        .update({
+          display_name: p.display_name.trim(),
+          avatar_emoji: p.avatar_emoji,
+          bio: p.bio || null,
+          tags: p.tags || [],
+          status: p.status
+        })
+        .eq('id', state.myProfileId)
+        .eq('owner_secret', MY_SECRET)
+        .select()
+        .maybeSingle();
+      if (error) { console.warn('update err', error); flashSaveStatus('error'); return null; }
+      flashSaveStatus('saved');
+      return data;
+    } else {
+      // INSERT new
+      const { data, error } = await supa
+        .from('profiles')
+        .insert({
+          owner_secret: MY_SECRET,
+          display_name: p.display_name.trim(),
+          avatar_emoji: p.avatar_emoji,
+          bio: p.bio || null,
+          tags: p.tags || [],
+          status: p.status,
+          is_seed: false
+        })
+        .select()
+        .single();
+      if (error) { console.warn('insert err', error); flashSaveStatus('error'); return null; }
+      state.myProfileId = data.id;
+      localStorage.setItem(KEY_PROFILE_ID, data.id);
+      state.published = true;
+      flashSaveStatus('published');
+      return data;
+    }
+  }
+
+  async function toggleLike(profileId, on) {
+    if (on) {
+      const { error } = await supa.from('likes').insert({ from_secret: MY_SECRET, to_profile: profileId });
+      if (!error || (error && error.code === '23505')) { state.myLikes.add(profileId); }
+      else console.warn('like insert err', error);
+    } else {
+      const { error } = await supa.from('likes').delete().eq('from_secret', MY_SECRET).eq('to_profile', profileId);
+      if (!error) state.myLikes.delete(profileId);
+      else console.warn('like delete err', error);
+    }
+  }
+
+  async function toggleFav(profileId, on) {
+    if (on) {
+      const { error } = await supa.from('favs').insert({ from_secret: MY_SECRET, to_profile: profileId });
+      if (!error || (error && error.code === '23505')) { state.myFavs.add(profileId); }
+      else console.warn('fav insert err', error);
+    } else {
+      const { error } = await supa.from('favs').delete().eq('from_secret', MY_SECRET).eq('to_profile', profileId);
+      if (!error) state.myFavs.delete(profileId);
+      else console.warn('fav delete err', error);
+    }
+  }
+
+  async function deleteMyProfile() {
+    if (!state.myProfileId) return;
+    const { error } = await supa.from('profiles').delete()
+      .eq('id', state.myProfileId).eq('owner_secret', MY_SECRET);
+    if (error) { console.warn('delete err', error); return false; }
+    state.myProfileId = null;
+    localStorage.removeItem(KEY_PROFILE_ID);
+    state.published = false;
+    state.profile = { ...DEFAULT_PROFILE };
+    return true;
+  }
+
+  // ===== Render: tag cloud =====
+  function renderTagCloud() {
+    const cloud = document.getElementById('tagCloud');
+    cloud.innerHTML = '';
+    ALL_TAGS.forEach(t => {
+      const b = document.createElement('button');
+      const isSel = state.selectedTags.has(t);
+      const inMyProfile = (state.profile.tags || []).includes(t);
+      b.className = 'tag-pill' + (isSel ? ' active' : '');
+      b.type = 'button';
+      b.textContent = t;
+      b.addEventListener('click', () => {
+        if (state.selectedTags.has(t)) state.selectedTags.delete(t);
+        else state.selectedTags.add(t);
+        // ALSO write to my profile tags (this section IS the user's profile tags)
+        state.profile.tags = [...state.selectedTags];
+        saveUI();
+        renderTagCloud();
+        renderPreview();
+        renderCards();
+        debouncedSaveProfile();
+      });
+      cloud.appendChild(b);
+    });
+    document.getElementById('selCount').textContent = state.selectedTags.size;
+  }
+
+  // ===== Calc match =====
+  function calcMatch(user) {
+    if (state.selectedTags.size === 0) return { pct: 0, shared: 0 };
+    let shared = 0;
+    (user.tags || []).forEach(t => { if (state.selectedTags.has(t)) shared++; });
+    const pct = Math.round((shared / state.selectedTags.size) * 100);
+    return { pct, shared };
+  }
+
+  // ===== Render preview =====
+  function renderPreview() {
+    document.getElementById('prevName').textContent = state.profile.display_name || 'なまえみほん';
+    document.getElementById('prevBio').textContent = state.profile.bio || 'ここに自己紹介が入るよ〜！';
+    document.getElementById('prevAv').textContent = state.profile.avatar_emoji;
+
+    const onlineEl = document.getElementById('prevOnline');
+    onlineEl.classList.remove('off');
+    if (state.profile.status === 'online') onlineEl.textContent = 'online';
+    else if (state.profile.status === 'busy') { onlineEl.textContent = 'busy'; onlineEl.classList.add('off'); }
+    else { onlineEl.textContent = 'おやすみ'; onlineEl.classList.add('off'); }
+
+    const tagsEl = document.getElementById('prevTags');
+    const tags = state.profile.tags || [];
+    if (tags.length === 0) {
+      tagsEl.innerHTML = '<span class="pick-tag muted">#タグを選んでね</span>';
+    } else {
+      const arr = tags.slice(0, 5);
+      tagsEl.innerHTML = arr.map(t => `<span class="pick-tag match">#${t}</span>`).join('') +
+        (tags.length > 5 ? `<span class="pick-tag muted">+${tags.length - 5}</span>` : '');
+    }
+  }
+
+  // ===== Render cards =====
+  function renderCards() {
+    const grid = document.getElementById('pickGrid');
+    grid.innerHTML = '';
+
+    // Exclude self from the "others" feed
+    let pool = state.allProfiles.filter(u => u.id !== state.myProfileId);
+
+    let enriched = pool.map(u => ({ ...u, ...calcMatch(u) }));
+
+    if (state.favOnly) enriched = enriched.filter(u => state.myFavs.has(u.id));
+
+    let sorted;
+    if (state.sort === 'match') {
+      sorted = enriched.slice().sort((a,b) => b.pct - a.pct || ((b.status === 'online') - (a.status === 'online')) || (b.likes_count - a.likes_count));
+    } else if (state.sort === 'online') {
+      sorted = enriched.slice().sort((a,b) => ((b.status === 'online') - (a.status === 'online')) || (b.pct - a.pct));
+    } else {
+      sorted = enriched.slice().sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+
+    // Update match count
+    const cm = document.getElementById('matchCount');
+    if (state.favOnly) {
+      cm.innerHTML = sorted.length === 0
+        ? '<span>まだお気に入りはいないよ ✨ カードのハートを押してみてね</span>'
+        : `<span>お気に入りに <strong>${sorted.length}</strong> 人の子がいるよ 💞</span>`;
+    } else if (state.selectedTags.size === 0) {
+      cm.innerHTML = `<span>タグを選ぶと、ぴったりの子が見つかるよ ✨ いまは <strong>${pool.length}</strong>人を表示中</span>`;
+    } else {
+      const matched = enriched.filter(u => u.shared > 0).length;
+      cm.innerHTML = `<span>選んだタグに合う <strong>${matched}</strong> 人の子がいるよ 💞</span>`;
+    }
+
+    // Update online count badge
+    const onlineN = state.allProfiles.filter(u => u.status === 'online').length;
+    const onCountEl = document.getElementById('online-count');
+    if (onCountEl) onCountEl.textContent = onlineN;
+
+    if (sorted.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.innerHTML = state.favOnly
+        ? '<div class="emo">💭</div><h4>まだお気に入りがいないよ</h4><p>「お気に入りだけ」をオフにするか、カードのハートを押してね</p>'
+        : '<div class="emo">🌸</div><h4>まだ誰もいないよ</h4><p>上のプロフィール入力欄から、最初の住人になろう ✨</p>';
+      grid.appendChild(empty);
+      return;
+    }
+
+    sorted.forEach((u, idx) => {
+      const isFaved = state.myFavs.has(u.id);
+      const isLiked = state.myLikes.has(u.id);
+      const card = document.createElement('div');
+      card.className = 'pick-card';
+      const isOnline = u.status === 'online';
+      const statusText = u.status === 'online' ? 'online' : (u.status === 'busy' ? 'busy' : 'おやすみ');
+      card.innerHTML = `
+        <span class="online${isOnline ? '' : ' off'}">${statusText}</span>
+        <button class="heart-fav${isFaved ? ' faved' : ''}" type="button" aria-label="お気に入り" aria-pressed="${isFaved}">♡</button>
+        <div class="pick-av" style="background:${pickBg(u.id)}">${u.avatar_emoji || '🍀'}</div>
+        <div class="pick-name">${escapeHTML(u.display_name)}</div>
+        <div class="pick-bio">${escapeHTML(u.bio || '')}</div>
+        <div class="pick-tags">
+          ${(u.tags || []).slice(0,5).map(t => `<span class="pick-tag${state.selectedTags.has(t) ? ' match' : ''}">#${escapeHTML(t)}</span>`).join('')}
+        </div>
+        <div class="pick-compat">
+          ${state.selectedTags.size > 0
+            ? `あなたと <span class="num">${u.pct}%</span> ぴったり<span class="shared">共通タグ ${u.shared} / ${state.selectedTags.size}個 ・ ♡${u.likes_count}</span>`
+            : `みんなから ♡<span class="num">${u.likes_count}</span><span class="shared">タグを選ぶと相性度がでるよ</span>`}
+        </div>
+        <button class="pick-cta${isLiked ? ' done' : ''}" type="button">${isLiked ? '♡ いいね済み' : '♡ いいねする'}</button>
+      `;
+      grid.appendChild(card);
+
+      // entrance animation
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(10px)';
+      setTimeout(() => {
+        card.style.transition = 'opacity 0.4s, transform 0.4s';
+        card.style.opacity = '1';
+        card.style.transform = '';
+      }, idx * 30);
+
+      // bind
+      const heart = card.querySelector('.heart-fav');
+      heart.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const nowFaved = !heart.classList.contains('faved');
+        // optimistic
+        heart.classList.toggle('faved', nowFaved);
+        heart.setAttribute('aria-pressed', String(nowFaved));
+        if (nowFaved) {
+          heart.style.transform = 'scale(1.4)';
+          setTimeout(() => heart.style.transform = '', 200);
+        }
+        await toggleFav(u.id, nowFaved);
+        updateFavCounter();
+        if (state.favOnly && !nowFaved) renderCards();
+      });
+
+      const cta = card.querySelector('.pick-cta');
+      cta.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (cta.classList.contains('done')) return;
+        // optimistic
+        cta.classList.add('done');
+        cta.textContent = '♡ いいね済み';
+        cta.disabled = true;
+        showSparkle();
+        await toggleLike(u.id, true);
+        // refresh that card's likes_count
+        const fresh = await supa.from('profiles_with_counts').select('likes_count').eq('id', u.id).single();
+        if (fresh.data) {
+          const idx2 = state.allProfiles.findIndex(p => p.id === u.id);
+          if (idx2 >= 0) state.allProfiles[idx2].likes_count = fresh.data.likes_count;
+        }
+      });
+    });
+  }
+
+  function escapeHTML(s) {
+    return String(s || '').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // ===== Sparkle =====
+  function showSparkle() {
+    const sparkle = document.createElement('div');
+    sparkle.textContent = '♡';
+    sparkle.style.cssText = `position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:100px;color:var(--pink-deep);pointer-events:none;z-index:9999;animation:sparkleFly 0.8s ease forwards`;
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 800);
+  }
+  const sparkleStyle = document.createElement('style');
+  sparkleStyle.textContent = `@keyframes sparkleFly{0%{transform:translate(-50%,-50%) scale(0.5);opacity:0}30%{transform:translate(-50%,-50%) scale(1.3);opacity:1}100%{transform:translate(-50%,-200%) scale(0.8);opacity:0}}`;
+  document.head.appendChild(sparkleStyle);
+
+  // ===== Fav counter =====
+  function updateFavCounter() {
+    const el = document.getElementById('favCounter');
+    const num = document.getElementById('favNum');
+    const count = state.myFavs.size;
+    num.textContent = count;
+    el.classList.toggle('has-favs', count > 0);
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    if (count > 0) el.classList.add('bump');
+  }
+
+  // ===== Save status =====
+  let saveFlashTimer = null;
+  function flashSaveStatus(kind) {
+    const el = document.getElementById('saveStatus');
+    if (!el) return;
+    el.classList.add('flash');
+    const span = el.querySelector('span:last-child');
+    const ico = el.querySelector('.save-ico');
+    if (kind === 'saved') { span.textContent = '保存したよ ♡'; ico.textContent = '✨'; }
+    else if (kind === 'published') { span.textContent = '公開したよ！みんなの一覧に並んでる ♡'; ico.textContent = '🎉'; }
+    else if (kind === 'error') { span.textContent = '保存に失敗… もう一度押してみてね'; ico.textContent = '⚠️'; }
+    clearTimeout(saveFlashTimer);
+    saveFlashTimer = setTimeout(() => {
+      el.classList.remove('flash');
+      ico.textContent = '☁️';
+      if (state.published) span.textContent = 'みんなと共有されてるよ ✨';
+      else span.textContent = 'なまえを入れると、みんなの一覧に並ぶよ ✨';
+    }, 1600);
+  }
+
+  function refreshSaveStatusBaseline() {
+    const el = document.getElementById('saveStatus');
+    if (!el) return;
+    const span = el.querySelector('span:last-child');
+    const ico = el.querySelector('.save-ico');
+    if (state.published) {
+      span.textContent = 'みんなと共有されてるよ ✨';
+      ico.textContent = '☁️';
+    } else {
+      span.textContent = 'なまえを入れると、みんなの一覧に並ぶよ ✨';
+      ico.textContent = '✏️';
+    }
+  }
+
+  // ===== Profile inputs =====
+  let saveTimer = null;
+  function debouncedSaveProfile() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      const before = state.published;
+      const result = await upsertMyProfile();
+      if (result && !before) {
+        // newly published! Re-fetch all profiles so card shows up
+        await reloadFeed();
+      } else if (result) {
+        // refresh self in feed cache
+        const idx = state.allProfiles.findIndex(p => p.id === state.myProfileId);
+        if (idx >= 0) {
+          state.allProfiles[idx] = { ...state.allProfiles[idx], ...result, likes_count: state.allProfiles[idx].likes_count, favs_count: state.allProfiles[idx].favs_count };
+        }
+      }
+    }, 600);
+  }
+
+  function setupProfileInputs() {
+    const nameInp = document.getElementById('inpName');
+    const bioInp  = document.getElementById('inpBio');
+
+    nameInp.value = state.profile.display_name;
+    bioInp.value  = state.profile.bio || '';
+
+    nameInp.addEventListener('input', e => {
+      state.profile.display_name = e.target.value;
+      renderPreview();
+      debouncedSaveProfile();
+    });
+
+    bioInp.addEventListener('input', e => {
+      state.profile.bio = e.target.value;
+      e.target.style.height = 'auto';
+      e.target.style.height = e.target.scrollHeight + 'px';
+      renderPreview();
+      debouncedSaveProfile();
+    });
+    if (bioInp.value) {
+      bioInp.style.height = 'auto';
+      bioInp.style.height = bioInp.scrollHeight + 'px';
+    }
+
+    setupCounter('inpName', 'nameCount', 20);
+    setupCounter('inpBio',  'bioCount',  80);
+  }
+
+  function setupCounter(inputId, counterId, max) {
+    const input = document.getElementById(inputId);
+    const counter = document.getElementById(counterId);
+    function update() {
+      const len = input.value.length;
+      counter.textContent = `${len} / ${max}`;
+      counter.classList.toggle('warn', len > max * 0.8);
+    }
+    input.addEventListener('input', update);
+    update();
+  }
+
+  function renderEmojiPicker() {
+    const picker = document.getElementById('emojiPicker');
+    picker.innerHTML = '';
+    EMOJI_CHOICES.forEach(e => {
+      const b = document.createElement('button');
+      b.className = 'emoji-btn' + (state.profile.avatar_emoji === e ? ' active' : '');
+      b.type = 'button';
+      b.textContent = e;
+      b.setAttribute('aria-label', 'アイコン ' + e);
+      b.addEventListener('click', () => {
+        state.profile.avatar_emoji = e;
+        renderEmojiPicker();
+        renderPreview();
+        debouncedSaveProfile();
+      });
+      picker.appendChild(b);
+    });
+  }
+
+  function setupStatusPicker() {
+    document.querySelectorAll('.status-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.status === state.profile.status);
+      b.addEventListener('click', () => {
+        state.profile.status = b.dataset.status;
+        document.querySelectorAll('.status-btn').forEach(x => x.classList.toggle('active', x === b));
+        renderPreview();
+        debouncedSaveProfile();
+      });
+    });
+  }
+
+  // ===== Reset profile (delete from DB!) =====
+  document.getElementById('resetProfile').addEventListener('click', async () => {
+    const hasContent = state.published || state.profile.display_name || state.profile.bio
+      || state.selectedTags.size > 0
+      || state.profile.avatar_emoji !== DEFAULT_PROFILE.avatar_emoji
+      || state.profile.status !== DEFAULT_PROFILE.status;
+    if (!hasContent) {
+      const btn = document.getElementById('resetProfile');
+      const orig = btn.textContent;
+      btn.textContent = '✨ もう空っぽ';
+      setTimeout(() => btn.textContent = orig, 1200);
+      return;
+    }
+    const msg = state.published
+      ? 'プロフィールをリセットします。\n\n⚠️ みんなの一覧からあなたのプロフィールが削除されます。\nお気に入りやいいねは残ります。\n\n本当に削除しますか？'
+      : 'プロフィール入力をリセットしますか？';
+    if (!confirm(msg)) return;
+
+    if (state.published) {
+      await deleteMyProfile();
+    } else {
+      state.profile = { ...DEFAULT_PROFILE };
+    }
+    state.selectedTags.clear();
+    document.getElementById('inpName').value = '';
+    document.getElementById('inpBio').value = '';
+    document.getElementById('inpBio').style.height = 'auto';
+    document.getElementById('nameCount').textContent = '0 / 20';
+    document.getElementById('bioCount').textContent = '0 / 80';
+    saveUI();
+    renderEmojiPicker();
+    renderTagCloud();
+    document.querySelectorAll('.status-btn').forEach(x =>
+      x.classList.toggle('active', x.dataset.status === DEFAULT_PROFILE.status));
+    renderPreview();
+    refreshSaveStatusBaseline();
+    await reloadFeed();
+  });
+
+  // ===== Reset all (header button) =====
+  document.getElementById('resetAllBtn').addEventListener('click', async () => {
+    const hasAny = state.published || state.myFavs.size > 0 || state.myLikes.size > 0
+      || state.selectedTags.size > 0 || state.profile.display_name || state.profile.bio;
+    if (!hasAny) {
+      const btn = document.getElementById('resetAllBtn');
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✨ もう空っぽ';
+      setTimeout(() => btn.innerHTML = orig, 1200);
+      return;
+    }
+    if (!confirm('プロフィール・タグ・お気に入り・いいねを ぜんぶリセットします。\n\n⚠️ DBからもあなたの記録（プロフィール、いいね、お気に入り）が削除されます。\n\n本当に進めますか？')) return;
+
+    // delete from DB
+    if (state.published) await deleteMyProfile();
+    // delete all my likes / favs
+    await supa.from('likes').delete().eq('from_secret', MY_SECRET);
+    await supa.from('favs').delete().eq('from_secret', MY_SECRET);
+
+    state.myLikes.clear();
+    state.myFavs.clear();
+    state.selectedTags.clear();
+    state.profile = { ...DEFAULT_PROFILE };
+    state.favOnly = false;
+    document.getElementById('favOnlyBtn').setAttribute('aria-pressed', 'false');
+    document.getElementById('inpName').value = '';
+    document.getElementById('inpBio').value = '';
+    document.getElementById('inpBio').style.height = 'auto';
+    document.getElementById('nameCount').textContent = '0 / 20';
+    document.getElementById('bioCount').textContent = '0 / 80';
+    saveUI();
+    renderEmojiPicker();
+    renderTagCloud();
+    document.querySelectorAll('.status-btn').forEach(x =>
+      x.classList.toggle('active', x.dataset.status === DEFAULT_PROFILE.status));
+    renderPreview();
+    refreshSaveStatusBaseline();
+    updateFavCounter();
+    await reloadFeed();
+  });
+
+  // ===== Fav counter click → toggle fav-only =====
+  document.getElementById('favCounter').addEventListener('click', () => {
+    const btn = document.getElementById('favOnlyBtn');
+    state.favOnly = !state.favOnly;
+    btn.setAttribute('aria-pressed', String(state.favOnly));
+    saveUI();
+    renderCards();
+    document.getElementById('favs-anchor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // ===== Fav-only toggle =====
+  document.getElementById('favOnlyBtn').addEventListener('click', () => {
+    state.favOnly = !state.favOnly;
+    document.getElementById('favOnlyBtn').setAttribute('aria-pressed', String(state.favOnly));
+    saveUI();
+    renderCards();
+  });
+
+  // ===== Sort pills =====
+  document.querySelectorAll('.sort-pill').forEach(p => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll('.sort-pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+      state.sort = p.dataset.sort;
+      saveUI();
+      renderCards();
+    });
+  });
+
+  // ===== Load data =====
+  async function reloadFeed() {
+    state.allProfiles = await fetchAllProfiles();
+    renderCards();
+  }
+
+  async function loadInitial() {
+    loadUI();
+    // try fetching my profile (if I have an id stored)
+    const mine = await fetchMyProfile();
+    if (mine) {
+      state.profile = {
+        display_name: mine.display_name || '',
+        bio: mine.bio || '',
+        avatar_emoji: mine.avatar_emoji || '🍀',
+        status: mine.status || 'online',
+        tags: mine.tags || []
+      };
+      state.published = true;
+      // sync selectedTags from my profile
+      state.selectedTags = new Set(mine.tags || []);
+    } else {
+      state.published = false;
+    }
+
+    // fetch interactions and feed in parallel
+    await Promise.all([
+      fetchMyInteractions(),
+      reloadFeed()
+    ]);
+
+    // sync UI
+    document.querySelectorAll('.sort-pill').forEach(p =>
+      p.classList.toggle('active', p.dataset.sort === state.sort));
+    document.getElementById('favOnlyBtn').setAttribute('aria-pressed', String(state.favOnly));
+
+    setupProfileInputs();
+    setupStatusPicker();
+    renderEmojiPicker();
+    renderTagCloud();
+    renderPreview();
+    renderCards();
+    updateFavCounter();
+    refreshSaveStatusBaseline();
+  }
+
+  loadInitial();
+
+</script>
+
+</body>
+</html>
