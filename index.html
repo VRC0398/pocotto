@@ -499,11 +499,16 @@
   .preview-card .online.off::before { background: var(--ink-mute); }
 
   .preview-card .pick-av {
-    width: 90px;
-    height: 90px;
-    font-size: 44px;
+    width: 160px;
+    height: 160px;
+    font-size: 72px;
     background: linear-gradient(135deg, var(--peach-light), var(--pink-light));
     margin-top: 24px;
+    cursor: default;
+  }
+  .preview-card .pick-av:hover {
+    transform: none;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   }
 
   .preview-card .pick-name { font-size: 16px; }
@@ -646,6 +651,86 @@
     transform: translateY(-2px) scale(1.05);
   }
 
+  /* Avatar uploader */
+  .avatar-uploader {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .avatar-drop {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 2px dashed var(--pink);
+    background: var(--bg-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .avatar-drop:hover {
+    background: var(--pink-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(255, 122, 168, 0.18);
+  }
+  .avatar-drop.dragover {
+    background: var(--pink-light);
+    border-style: solid;
+    transform: scale(1.04);
+  }
+  .avatar-drop.loading { cursor: progress; opacity: 0.7; }
+  .avatar-drop img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .avatar-drop .placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--pink-deep);
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    padding: 0 8px;
+    line-height: 1.3;
+  }
+  .avatar-drop .placeholder .icon { font-size: 28px; line-height: 1; }
+  .avatar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+  .avatar-actions .hint {
+    font-size: 11px;
+    color: var(--ink-mute);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .avatar-remove {
+    background: var(--bg-soft);
+    border: 1px solid var(--bg-soft);
+    color: var(--ink-soft);
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: all 0.15s;
+  }
+  .avatar-remove:hover { background: white; border-color: var(--pink); color: var(--pink-deep); }
+  .avatar-remove:disabled { opacity: 0.4; cursor: not-allowed; }
+
   /* Status picker */
   .status-picker {
     display: flex;
@@ -736,6 +821,366 @@
   .tag-pill.active::before {
     content: '✓ ';
     font-weight: 900;
+  }
+
+  /* User-owned tag chip (with remove button) */
+  .tag-chip {
+    background: linear-gradient(135deg, var(--peach), var(--pink));
+    color: white;
+    border: 2px solid var(--pink-deep);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 6px 6px 12px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 4px 10px rgba(255, 122, 168, 0.25);
+  }
+  .tag-chip::before {
+    content: '#';
+    opacity: 0.85;
+    margin-right: 1px;
+  }
+  .tag-chip .remove {
+    background: rgba(255,255,255,0.28);
+    color: white;
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+  .tag-chip .remove:hover { background: rgba(255,255,255,0.5); }
+
+  /* "+ add" button */
+  .tag-add {
+    background: white;
+    color: var(--pink-deep);
+    border: 2px dashed var(--pink);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tag-add:hover {
+    background: var(--pink-light);
+    transform: translateY(-1px);
+    border-style: solid;
+  }
+  .tag-add:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    background: var(--bg-soft);
+    border-color: var(--bg-soft);
+    color: var(--ink-mute);
+  }
+
+  /* Inline tag input */
+  .tag-input-wrap {
+    display: inline-flex;
+    align-items: center;
+    background: white;
+    border: 2px solid var(--pink);
+    border-radius: 999px;
+    padding: 2px 6px 2px 12px;
+    box-shadow: 0 4px 10px rgba(255, 122, 168, 0.18);
+  }
+  .tag-input-wrap::before {
+    content: '#';
+    color: var(--pink-deep);
+    font-weight: 800;
+    margin-right: 2px;
+  }
+  .tag-input {
+    border: none;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    background: transparent;
+    width: 110px;
+    padding: 4px 0;
+  }
+  .tag-input::placeholder { color: var(--ink-mute); font-weight: 500; }
+  .tag-input-actions {
+    display: inline-flex;
+    gap: 3px;
+    margin-left: 4px;
+  }
+  .tag-input-actions button {
+    border: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-family: inherit;
+    transition: transform 0.15s;
+  }
+  .tag-input-actions button:hover { transform: scale(1.08); }
+  .tag-input-actions .ok { background: var(--mint-deep); color: white; }
+  .tag-input-actions .cancel { background: var(--bg-soft); color: var(--ink-soft); }
+
+  .tag-empty-hint {
+    color: var(--ink-mute);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 4px;
+  }
+
+  /* ===== Profile detail modal ===== */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(40, 24, 30, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 1000;
+    padding: 32px 16px;
+    overflow-y: auto;
+    animation: modalFade 0.2s ease;
+  }
+  .modal-backdrop.open { display: flex; }
+  @keyframes modalFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal-sheet {
+    background: white;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 520px;
+    padding: 0 0 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    position: relative;
+    animation: modalRise 0.22s ease;
+    margin: auto;
+  }
+  @keyframes modalRise {
+    from { transform: translateY(16px) scale(0.97); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    border: none;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--ink);
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    line-height: 1;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .modal-close:hover {
+    background: white;
+    transform: scale(1.06);
+  }
+
+  .modal-hero {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 24px 24px 0 0;
+    background: linear-gradient(135deg, var(--peach-light), var(--pink-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 180px;
+    overflow: hidden;
+    position: relative;
+  }
+  .modal-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .modal-hero .online {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--mint-deep);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    z-index: 1;
+  }
+  .modal-hero .online::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--mint-deep);
+    border-radius: 50%;
+  }
+  .modal-hero .online.off { color: var(--ink-mute); }
+  .modal-hero .online.off::before { background: var(--ink-mute); }
+
+  .modal-body { padding: 22px 28px 0; }
+  .modal-name {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+  .modal-bio {
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .modal-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .modal-tags .pick-tag {
+    font-size: 12px;
+  }
+
+  .modal-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .modal-stat {
+    background: var(--bg-soft);
+    border-radius: 14px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .modal-stat .label {
+    font-size: 10px;
+    color: var(--ink-mute);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .modal-stat .value {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--pink-deep);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    line-height: 1;
+  }
+  .modal-stat .value .unit {
+    font-size: 12px;
+    margin-left: 2px;
+    color: var(--ink-soft);
+  }
+
+  .modal-similar {
+    background: linear-gradient(135deg, var(--cream), var(--peach-light));
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .modal-similar .num {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--pink-deep);
+    font-size: 16px;
+    font-weight: 900;
+    margin: 0 2px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .modal-actions button {
+    flex: 1;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .modal-actions .like-btn {
+    background: linear-gradient(135deg, var(--peach), var(--pink));
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 122, 168, 0.3);
+  }
+  .modal-actions .like-btn:hover { transform: translateY(-2px); }
+  .modal-actions .like-btn.done {
+    background: var(--mint);
+    color: var(--mint-deep);
+    box-shadow: none;
+  }
+  .modal-actions .fav-btn {
+    background: white;
+    border: 2px solid var(--pink-light);
+    color: var(--pink-deep);
+  }
+  .modal-actions .fav-btn:hover {
+    background: var(--pink-light);
+    transform: translateY(-2px);
+  }
+  .modal-actions .fav-btn.faved {
+    background: var(--pink);
+    color: white;
+    border-color: var(--pink-deep);
+  }
+
+  @media (max-width: 520px) {
+    .modal-backdrop { padding: 0; }
+    .modal-sheet { border-radius: 0; max-width: 100%; min-height: 100vh; }
+    .modal-hero { border-radius: 0; }
   }
 
   /* ===== Home grid (MAIN) ===== */
@@ -932,16 +1377,29 @@
   .pick-card .online.off::before { background: var(--ink-mute); }
 
   .pick-av {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
+    width: 160px;
+    height: 160px;
+    border-radius: 4px;
     margin: 14px auto 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 50px;
+    font-size: 80px;
     border: 4px solid white;
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    overflow: hidden;
+    cursor: zoom-in;
+    transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .pick-av:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+  }
+  .pick-av img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .pick-name {
@@ -1282,7 +1740,7 @@
         <div class="preview-label">こんな風に見えるよ ↓</div>
         <div class="preview-card" id="previewCard">
           <span class="online" id="prevOnline">online</span>
-          <div class="pick-av" id="prevAv">🍀</div>
+          <div class="pick-av" id="prevAv"><img id="prevAvImg" alt=""></div>
           <div class="pick-name" id="prevName">なまえみほん</div>
           <div class="pick-bio" id="prevBio">ここに自己紹介が入るよ〜！</div>
           <div class="pick-tags" id="prevTags">
@@ -1308,10 +1766,21 @@
           <label class="field-label">
             <span class="field-num">②</span>
             <span class="field-title">アイコン</span>
-            <span class="field-sub">えもじから選んでね</span>
+            <span class="field-sub">画像をアップロードしてね</span>
           </label>
-          <div class="emoji-picker" id="emojiPicker">
-            <!-- emojis inserted by JS -->
+          <div class="avatar-uploader">
+            <label class="avatar-drop" id="avatarDrop" for="avatarFileInput" tabindex="0" role="button" aria-label="アイコン画像をアップロード">
+              <div class="placeholder" id="avatarPlaceholder">
+                <span class="icon">📷</span>
+                <span>クリック<br>または<br>ドラッグ&amp;ドロップ</span>
+              </div>
+              <img id="avatarPreviewImg" alt="" style="display:none;">
+            </label>
+            <input type="file" id="avatarFileInput" accept="image/*" style="display:none;">
+            <div class="avatar-actions">
+              <div class="hint" id="avatarHint">jpg / png / webp（最大 10MB）<br>正方形に切り抜かれます</div>
+              <button type="button" class="avatar-remove" id="avatarRemove" disabled>削除する</button>
+            </div>
           </div>
         </div>
 
@@ -1329,7 +1798,7 @@
           <label class="field-label">
             <span class="field-num">④</span>
             <span class="field-title">すきなこと</span>
-            <span class="field-sub">いくつでもOK <span class="badge-mini" id="selCount">0</span> 個えらんだよ</span>
+            <span class="field-sub">自由に書いてね <span class="badge-mini" id="selCount">0</span> / 10 個</span>
           </label>
           <div class="tag-cloud" id="tagCloud">
             <!-- tags inserted by JS -->
@@ -1473,16 +1942,13 @@
   const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
   // ===== Constants =====
-  const ALL_TAGS = [
-    '写真', '集会', 'おさんぽ', 'カフェ', '改変', 'シェーダー',
-    '寝落ち', '無言', '声出す', 'ダンス', '音楽', 'DJ',
-    'お絵描き', 'ものづくり', 'ワールド巡り', 'ゲーム',
-    '夜型', '朝型', '映画鑑賞', 'おしゃべり', '読書', '料理',
-    'コスプレ', 'バーチャル撮影', 'クリエイター', 'はじめてさん歓迎'
-  ];
+  const TAG_MAX_LEN = 8;   // max characters per tag
+  const TAG_MAX_COUNT = 10; // max tags per profile
 
   const EMOJI_CHOICES = ['🍑','🌷','🐰','🌻','☕','🌙','🎀','🌟','🍀','🧸','🍓','🦋','🌸','🍰','☁️','🐱'];
-  const DEFAULT_PROFILE = { display_name: '', bio: '', avatar_emoji: '🍀', status: 'online', tags: [] };
+  const DEFAULT_PROFILE = { display_name: '', bio: '', avatar_url: '', status: 'online', tags: [] };
+  const STORAGE_BUCKET = 'profile-images';
+  const AVATAR_MAX_BYTES = 10 * 1024 * 1024; // 10MB upload limit (resized to ~512px before send)
 
   // Avatar background palette (deterministic from id hash)
   const BG_PALETTE = [
@@ -1531,7 +1997,8 @@
     sort: 'match',
     favOnly: false,
     loading: false,
-    published: false            // 自分のプロフィールが既にDBに保存されているか
+    published: false,           // 自分のプロフィールが既にDBに保存されているか
+    tagInputOpen: false         // タグ追加の入力欄が開いているか
   };
 
   // Persist UI-only state (sort/favOnly + tag selections) locally
@@ -1593,6 +2060,11 @@
     // require display_name
     const p = state.profile;
     if (!p.display_name || !p.display_name.trim()) return null;
+    // require avatar_url on first publish
+    if (!state.myProfileId && !p.avatar_url) {
+      flashSaveStatus('need-avatar');
+      return null;
+    }
 
     if (state.myProfileId) {
       // UPDATE existing
@@ -1600,7 +2072,7 @@
         .from('profiles')
         .update({
           display_name: p.display_name.trim(),
-          avatar_emoji: p.avatar_emoji,
+          avatar_url: p.avatar_url || null,
           bio: p.bio || null,
           tags: p.tags || [],
           status: p.status
@@ -1619,7 +2091,7 @@
         .insert({
           owner_secret: MY_SECRET,
           display_name: p.display_name.trim(),
-          avatar_emoji: p.avatar_emoji,
+          avatar_url: p.avatar_url || null,
           bio: p.bio || null,
           tags: p.tags || [],
           status: p.status,
@@ -1672,31 +2144,132 @@
     return true;
   }
 
-  // ===== Render: tag cloud =====
+  // ===== Render: tag cloud (user-defined tags) =====
+  // state.tagInputOpen: bool — whether the inline input box is currently visible
   function renderTagCloud() {
     const cloud = document.getElementById('tagCloud');
     cloud.innerHTML = '';
-    ALL_TAGS.forEach(t => {
-      const b = document.createElement('button');
-      const isSel = state.selectedTags.has(t);
-      const inMyProfile = (state.profile.tags || []).includes(t);
-      b.className = 'tag-pill' + (isSel ? ' active' : '');
-      b.type = 'button';
-      b.textContent = t;
-      b.addEventListener('click', () => {
-        if (state.selectedTags.has(t)) state.selectedTags.delete(t);
-        else state.selectedTags.add(t);
-        // ALSO write to my profile tags (this section IS the user's profile tags)
-        state.profile.tags = [...state.selectedTags];
-        saveUI();
-        renderTagCloud();
-        renderPreview();
-        renderCards();
-        debouncedSaveProfile();
-      });
-      cloud.appendChild(b);
+    const tags = state.profile.tags || [];
+
+    if (tags.length === 0 && !state.tagInputOpen) {
+      const hint = document.createElement('span');
+      hint.className = 'tag-empty-hint';
+      hint.textContent = '↓ボタンから好きなことを書いてね';
+      cloud.appendChild(hint);
+    }
+
+    tags.forEach((t, idx) => {
+      const chip = document.createElement('span');
+      chip.className = 'tag-chip';
+      // text content (sanitized by textContent below)
+      const label = document.createTextNode(t);
+      chip.appendChild(label);
+      const x = document.createElement('button');
+      x.type = 'button';
+      x.className = 'remove';
+      x.setAttribute('aria-label', `${t} を削除`);
+      x.textContent = '×';
+      x.addEventListener('click', () => removeTag(idx));
+      chip.appendChild(x);
+      cloud.appendChild(chip);
     });
-    document.getElementById('selCount').textContent = state.selectedTags.size;
+
+    if (state.tagInputOpen) {
+      const wrap = document.createElement('span');
+      wrap.className = 'tag-input-wrap';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'tag-input';
+      input.maxLength = TAG_MAX_LEN;
+      input.placeholder = `${TAG_MAX_LEN}文字まで`;
+      input.value = '';
+      wrap.appendChild(input);
+      const actions = document.createElement('span');
+      actions.className = 'tag-input-actions';
+      const ok = document.createElement('button');
+      ok.type = 'button';
+      ok.className = 'ok';
+      ok.textContent = '✓';
+      ok.setAttribute('aria-label', '追加');
+      const cancel = document.createElement('button');
+      cancel.type = 'button';
+      cancel.className = 'cancel';
+      cancel.textContent = '×';
+      cancel.setAttribute('aria-label', 'やめる');
+      actions.appendChild(ok);
+      actions.appendChild(cancel);
+      wrap.appendChild(actions);
+      cloud.appendChild(wrap);
+
+      const commit = () => {
+        const v = (input.value || '').trim();
+        if (!v) { closeInput(); return; }
+        addTag(v);
+      };
+      const closeInput = () => {
+        state.tagInputOpen = false;
+        renderTagCloud();
+      };
+      ok.addEventListener('click', commit);
+      cancel.addEventListener('click', closeInput);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); commit(); }
+        else if (e.key === 'Escape') { e.preventDefault(); closeInput(); }
+      });
+      // Auto-focus
+      setTimeout(() => input.focus(), 0);
+    } else if (tags.length < TAG_MAX_COUNT) {
+      const add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'tag-add';
+      add.textContent = '+ 追加';
+      add.addEventListener('click', () => {
+        state.tagInputOpen = true;
+        renderTagCloud();
+      });
+      cloud.appendChild(add);
+    }
+
+    document.getElementById('selCount').textContent = tags.length;
+  }
+
+  function addTag(raw) {
+    const v = String(raw).trim().slice(0, TAG_MAX_LEN);
+    if (!v) return;
+    const tags = state.profile.tags || [];
+    if (tags.length >= TAG_MAX_COUNT) {
+      state.tagInputOpen = false;
+      renderTagCloud();
+      return;
+    }
+    if (tags.includes(v)) {
+      // already exists — just close the input
+      state.tagInputOpen = false;
+      renderTagCloud();
+      return;
+    }
+    state.profile.tags = [...tags, v];
+    // Keep selectedTags in sync (this section IS the user's profile tags)
+    state.selectedTags = new Set(state.profile.tags);
+    state.tagInputOpen = false;
+    saveUI();
+    renderTagCloud();
+    renderPreview();
+    renderCards();
+    debouncedSaveProfile();
+  }
+
+  function removeTag(idx) {
+    const tags = (state.profile.tags || []).slice();
+    if (idx < 0 || idx >= tags.length) return;
+    tags.splice(idx, 1);
+    state.profile.tags = tags;
+    state.selectedTags = new Set(state.profile.tags);
+    saveUI();
+    renderTagCloud();
+    renderPreview();
+    renderCards();
+    debouncedSaveProfile();
   }
 
   // ===== Calc match =====
@@ -1712,7 +2285,17 @@
   function renderPreview() {
     document.getElementById('prevName').textContent = state.profile.display_name || 'なまえみほん';
     document.getElementById('prevBio').textContent = state.profile.bio || 'ここに自己紹介が入るよ〜！';
-    document.getElementById('prevAv').textContent = state.profile.avatar_emoji;
+    const prevAvImg = document.getElementById('prevAvImg');
+    const prevAv = document.getElementById('prevAv');
+    if (state.profile.avatar_url) {
+      prevAvImg.src = state.profile.avatar_url;
+      prevAvImg.style.display = 'block';
+      prevAv.style.background = 'transparent';
+    } else {
+      prevAvImg.removeAttribute('src');
+      prevAvImg.style.display = 'none';
+      prevAv.style.background = 'linear-gradient(135deg, var(--peach-light), var(--pink-light))';
+    }
 
     const onlineEl = document.getElementById('prevOnline');
     onlineEl.classList.remove('off');
@@ -1738,6 +2321,16 @@
 
     // Exclude self from the "others" feed
     let pool = state.allProfiles.filter(u => u.id !== state.myProfileId);
+
+    // --- Seed users handling ---
+    // If at least one real (non-seed) user other than the current user exists,
+    // hide all seed users so the feed shows real people only.
+    // If no real users exist yet, keep the seed users visible so the page isn't empty.
+    const realUsersExist = state.allProfiles.some(u => !u.is_seed && u.id !== state.myProfileId);
+    if (realUsersExist) {
+      pool = pool.filter(u => !u.is_seed);
+    }
+    // --- end seed handling ---
 
     let enriched = pool.map(u => ({ ...u, ...calcMatch(u) }));
 
@@ -1765,8 +2358,11 @@
       cm.innerHTML = `<span>選んだタグに合う <strong>${matched}</strong> 人の子がいるよ 💞</span>`;
     }
 
-    // Update online count badge
-    const onlineN = state.allProfiles.filter(u => u.status === 'online').length;
+    // Update online count badge (apply seed filter so the count matches the visible cards)
+    const visibleForCount = realUsersExist
+      ? state.allProfiles.filter(u => !u.is_seed)
+      : state.allProfiles;
+    const onlineN = visibleForCount.filter(u => u.status === 'online').length;
     const onCountEl = document.getElementById('online-count');
     if (onCountEl) onCountEl.textContent = onlineN;
 
@@ -1787,10 +2383,14 @@
       card.className = 'pick-card';
       const isOnline = u.status === 'online';
       const statusText = u.status === 'online' ? 'online' : (u.status === 'busy' ? 'busy' : 'おやすみ');
+      const avInner = u.avatar_url
+        ? `<img src="${escapeHTML(u.avatar_url)}" alt="">`
+        : (u.avatar_emoji || '🍀');
+      const avStyle = u.avatar_url ? '' : `background:${pickBg(u.id)}`;
       card.innerHTML = `
         <span class="online${isOnline ? '' : ' off'}">${statusText}</span>
         <button class="heart-fav${isFaved ? ' faved' : ''}" type="button" aria-label="お気に入り" aria-pressed="${isFaved}">♡</button>
-        <div class="pick-av" style="background:${pickBg(u.id)}">${u.avatar_emoji || '🍀'}</div>
+        <div class="pick-av" style="${avStyle}">${avInner}</div>
         <div class="pick-name">${escapeHTML(u.display_name)}</div>
         <div class="pick-bio">${escapeHTML(u.bio || '')}</div>
         <div class="pick-tags">
@@ -1848,12 +2448,165 @@
           if (idx2 >= 0) state.allProfiles[idx2].likes_count = fresh.data.likes_count;
         }
       });
+
+      // Avatar click → open profile detail modal
+      const av = card.querySelector('.pick-av');
+      av.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openProfileModal(u.id);
+      });
     });
   }
 
   function escapeHTML(s) {
     return String(s || '').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
   }
+
+  // ===== Profile detail modal =====
+  let modalUserId = null;
+
+  function openProfileModal(userId) {
+    const u = state.allProfiles.find(p => p.id === userId);
+    if (!u) return;
+    modalUserId = userId;
+    renderProfileModal();
+    const m = document.getElementById('profileModal');
+    m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeProfileModal() {
+    const m = document.getElementById('profileModal');
+    m.classList.remove('open');
+    document.body.style.overflow = '';
+    modalUserId = null;
+  }
+
+  function renderProfileModal() {
+    if (!modalUserId) return;
+    const u = state.allProfiles.find(p => p.id === modalUserId);
+    if (!u) { closeProfileModal(); return; }
+
+    // Hero image / emoji
+    const heroImg = document.getElementById('modalImg');
+    const heroEmoji = document.getElementById('modalEmoji');
+    const hero = document.getElementById('modalHero');
+    if (u.avatar_url) {
+      heroImg.src = u.avatar_url;
+      heroImg.style.display = 'block';
+      heroEmoji.textContent = '';
+      hero.style.background = '#f3e6ec';
+    } else {
+      heroImg.removeAttribute('src');
+      heroImg.style.display = 'none';
+      heroEmoji.textContent = u.avatar_emoji || '🍀';
+      hero.style.background = pickBg(u.id);
+    }
+
+    // Online status
+    const onlineEl = document.getElementById('modalOnline');
+    onlineEl.classList.remove('off');
+    if (u.status === 'online') onlineEl.textContent = 'online';
+    else if (u.status === 'busy') { onlineEl.textContent = 'busy'; onlineEl.classList.add('off'); }
+    else { onlineEl.textContent = 'おやすみ'; onlineEl.classList.add('off'); }
+
+    document.getElementById('modalName').textContent = u.display_name || '';
+    document.getElementById('modalBio').textContent = u.bio || 'まだ自己紹介はないみたい ✨';
+
+    // Tags
+    const tagsEl = document.getElementById('modalTags');
+    const tags = u.tags || [];
+    if (tags.length === 0) {
+      tagsEl.innerHTML = '<span class="pick-tag muted">タグはまだないよ</span>';
+    } else {
+      tagsEl.innerHTML = tags.map(t =>
+        `<span class="pick-tag${state.selectedTags.has(t) ? ' match' : ''}">#${escapeHTML(t)}</span>`
+      ).join('');
+    }
+
+    // Stats
+    document.getElementById('modalLikes').textContent = u.likes_count || 0;
+    const match = calcMatch(u);
+    const matchStat = document.getElementById('modalMatchStat');
+    if (state.selectedTags.size > 0) {
+      matchStat.style.display = '';
+      document.getElementById('modalMatchPct').textContent = match.pct;
+    } else {
+      matchStat.style.display = 'none';
+    }
+
+    // Similar people
+    const similarEl = document.getElementById('modalSimilar');
+    const userTagSet = new Set(tags);
+    if (userTagSet.size === 0) {
+      similarEl.style.display = 'none';
+    } else {
+      // count people (excluding this user and self) who share at least one tag
+      let count = 0;
+      state.allProfiles.forEach(p => {
+        if (p.id === u.id || p.id === state.myProfileId) return;
+        if (!Array.isArray(p.tags)) return;
+        if (p.tags.some(t => userTagSet.has(t))) count++;
+      });
+      similarEl.style.display = '';
+      if (count > 0) {
+        similarEl.innerHTML = `同じ趣味の人、他にも <span class="num">${count}</span> 人いるよ ♡`;
+      } else {
+        similarEl.innerHTML = `まだこの子と趣味が重なる人はいないみたい ✨ 一番乗りかも！`;
+      }
+    }
+
+    // Like / Fav buttons
+    const likeBtn = document.getElementById('modalLikeBtn');
+    const favBtn = document.getElementById('modalFavBtn');
+    const isLiked = state.myLikes.has(u.id);
+    const isFaved = state.myFavs.has(u.id);
+    likeBtn.classList.toggle('done', isLiked);
+    likeBtn.textContent = isLiked ? '♡ いいね済み' : '♡ いいねする';
+    likeBtn.disabled = isLiked;
+    favBtn.classList.toggle('faved', isFaved);
+    favBtn.textContent = isFaved ? '★ お気に入り中' : '★ お気に入り';
+  }
+
+  // Modal event bindings (one-time setup)
+  document.getElementById('modalClose').addEventListener('click', closeProfileModal);
+  document.getElementById('profileModal').addEventListener('click', (e) => {
+    if (e.target.id === 'profileModal') closeProfileModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('profileModal').classList.contains('open')) {
+      closeProfileModal();
+    }
+  });
+  document.getElementById('modalLikeBtn').addEventListener('click', async () => {
+    if (!modalUserId) return;
+    const btn = document.getElementById('modalLikeBtn');
+    if (btn.classList.contains('done')) return;
+    btn.classList.add('done');
+    btn.textContent = '♡ いいね済み';
+    btn.disabled = true;
+    showSparkle();
+    await toggleLike(modalUserId, true);
+    // refresh count for that user
+    const fresh = await supa.from('profiles_with_counts').select('likes_count').eq('id', modalUserId).single();
+    if (fresh.data) {
+      const idx2 = state.allProfiles.findIndex(p => p.id === modalUserId);
+      if (idx2 >= 0) state.allProfiles[idx2].likes_count = fresh.data.likes_count;
+      document.getElementById('modalLikes').textContent = fresh.data.likes_count;
+    }
+    // refresh the underlying card too
+    renderCards();
+  });
+  document.getElementById('modalFavBtn').addEventListener('click', async () => {
+    if (!modalUserId) return;
+    const btn = document.getElementById('modalFavBtn');
+    const nowFaved = !btn.classList.contains('faved');
+    btn.classList.toggle('faved', nowFaved);
+    btn.textContent = nowFaved ? '★ お気に入り中' : '★ お気に入り';
+    await toggleFav(modalUserId, nowFaved);
+    updateFavCounter();
+    renderCards();
+  });
 
   // ===== Sparkle =====
   function showSparkle() {
@@ -1890,6 +2643,7 @@
     if (kind === 'saved') { span.textContent = '保存したよ ♡'; ico.textContent = '✨'; }
     else if (kind === 'published') { span.textContent = '公開したよ！みんなの一覧に並んでる ♡'; ico.textContent = '🎉'; }
     else if (kind === 'error') { span.textContent = '保存に失敗… もう一度押してみてね'; ico.textContent = '⚠️'; }
+    else if (kind === 'need-avatar') { span.textContent = 'アイコン画像をアップロードしてね'; ico.textContent = '📷'; }
     clearTimeout(saveFlashTimer);
     saveFlashTimer = setTimeout(() => {
       el.classList.remove('flash');
@@ -1974,23 +2728,152 @@
     update();
   }
 
-  function renderEmojiPicker() {
-    const picker = document.getElementById('emojiPicker');
-    picker.innerHTML = '';
-    EMOJI_CHOICES.forEach(e => {
-      const b = document.createElement('button');
-      b.className = 'emoji-btn' + (state.profile.avatar_emoji === e ? ' active' : '');
-      b.type = 'button';
-      b.textContent = e;
-      b.setAttribute('aria-label', 'アイコン ' + e);
-      b.addEventListener('click', () => {
-        state.profile.avatar_emoji = e;
-        renderEmojiPicker();
-        renderPreview();
-        debouncedSaveProfile();
-      });
-      picker.appendChild(b);
+  // ===== Avatar uploader =====
+  function setupAvatarUploader() {
+    const drop = document.getElementById('avatarDrop');
+    const fileInput = document.getElementById('avatarFileInput');
+    const removeBtn = document.getElementById('avatarRemove');
+    const hintEl = document.getElementById('avatarHint');
+    const DEFAULT_HINT = 'jpg / png / webp（最大 10MB）<br>正方形に切り抜かれます';
+
+    function setHint(msg, isError) {
+      hintEl.innerHTML = msg;
+      hintEl.style.color = isError ? 'var(--pink-deep)' : '';
+    }
+
+    // Click to open file dialog handled by <label for=...> automatically.
+    // Enter/Space on the focused label should also open it.
+    drop.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        fileInput.click();
+      }
     });
+
+    // Drag & drop
+    ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, (e) => {
+      e.preventDefault(); e.stopPropagation();
+      drop.classList.add('dragover');
+    }));
+    ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, (e) => {
+      e.preventDefault(); e.stopPropagation();
+      drop.classList.remove('dragover');
+    }));
+    drop.addEventListener('drop', (e) => {
+      const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f) handleFile(f);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (f) handleFile(f);
+      // Reset so same file can be re-picked
+      e.target.value = '';
+    });
+
+    removeBtn.addEventListener('click', async () => {
+      if (!state.profile.avatar_url) return;
+      if (!confirm('アイコン画像を削除しますか？')) return;
+      state.profile.avatar_url = '';
+      refreshAvatarUI();
+      renderPreview();
+      debouncedSaveProfile();
+    });
+
+    async function handleFile(file) {
+      if (!file.type || !file.type.startsWith('image/')) {
+        setHint('画像ファイルを選んでね（jpg / png / webp）', true);
+        return;
+      }
+      if (file.size > AVATAR_MAX_BYTES) {
+        setHint('ファイルが大きすぎるよ（10MBまで）', true);
+        return;
+      }
+      try {
+        drop.classList.add('loading');
+        setHint('画像を準備中…');
+        const blob = await resizeImage(file, 640, 0.85);
+        setHint('アップロード中…');
+        const url = await uploadAvatar(blob);
+        state.profile.avatar_url = url;
+        refreshAvatarUI();
+        renderPreview();
+        setHint(DEFAULT_HINT);
+        debouncedSaveProfile();
+      } catch (err) {
+        console.warn('avatar upload failed', err);
+        setHint('アップロードに失敗したよ。もう一度試してね', true);
+      } finally {
+        drop.classList.remove('loading');
+      }
+    }
+  }
+
+  // Resize an image File to fit within `maxSize` square and return a JPEG Blob.
+  function resizeImage(file, maxSize, quality) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('read failed'));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('decode failed'));
+        img.onload = () => {
+          // Center-crop to square, then scale to maxSize
+          const srcSize = Math.min(img.width, img.height);
+          const sx = (img.width - srcSize) / 2;
+          const sy = (img.height - srcSize) / 2;
+          const targetSize = Math.min(maxSize, srcSize);
+          const canvas = document.createElement('canvas');
+          canvas.width = targetSize;
+          canvas.height = targetSize;
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, sx, sy, srcSize, srcSize, 0, 0, targetSize, targetSize);
+          canvas.toBlob((blob) => {
+            if (!blob) return reject(new Error('encode failed'));
+            resolve(blob);
+          }, 'image/jpeg', quality);
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function uploadAvatar(blob) {
+    // Use a per-user, content-overwrite-safe filename.
+    // owner_secret length is 32 hex chars; safe as a filesystem path.
+    const filename = `${MY_SECRET}.jpg`;
+    const { error: upErr } = await supa.storage
+      .from(STORAGE_BUCKET)
+      .upload(filename, blob, {
+        contentType: 'image/jpeg',
+        cacheControl: '3600',
+        upsert: true
+      });
+    if (upErr) throw upErr;
+    const { data: pub } = supa.storage.from(STORAGE_BUCKET).getPublicUrl(filename);
+    if (!pub || !pub.publicUrl) throw new Error('no public url');
+    // Cache-bust so updated images show immediately
+    return `${pub.publicUrl}?v=${Date.now()}`;
+  }
+
+  function refreshAvatarUI() {
+    const previewImg = document.getElementById('avatarPreviewImg');
+    const placeholder = document.getElementById('avatarPlaceholder');
+    const removeBtn = document.getElementById('avatarRemove');
+    if (state.profile.avatar_url) {
+      previewImg.src = state.profile.avatar_url;
+      previewImg.style.display = 'block';
+      placeholder.style.display = 'none';
+      removeBtn.disabled = false;
+    } else {
+      previewImg.removeAttribute('src');
+      previewImg.style.display = 'none';
+      placeholder.style.display = 'flex';
+      removeBtn.disabled = true;
+    }
   }
 
   function setupStatusPicker() {
@@ -2009,7 +2892,7 @@
   document.getElementById('resetProfile').addEventListener('click', async () => {
     const hasContent = state.published || state.profile.display_name || state.profile.bio
       || state.selectedTags.size > 0
-      || state.profile.avatar_emoji !== DEFAULT_PROFILE.avatar_emoji
+      || !!state.profile.avatar_url
       || state.profile.status !== DEFAULT_PROFILE.status;
     if (!hasContent) {
       const btn = document.getElementById('resetProfile');
@@ -2035,7 +2918,7 @@
     document.getElementById('nameCount').textContent = '0 / 20';
     document.getElementById('bioCount').textContent = '0 / 80';
     saveUI();
-    renderEmojiPicker();
+    refreshAvatarUI();
     renderTagCloud();
     document.querySelectorAll('.status-btn').forEach(x =>
       x.classList.toggle('active', x.dataset.status === DEFAULT_PROFILE.status));
@@ -2075,7 +2958,7 @@
     document.getElementById('nameCount').textContent = '0 / 20';
     document.getElementById('bioCount').textContent = '0 / 80';
     saveUI();
-    renderEmojiPicker();
+    refreshAvatarUI();
     renderTagCloud();
     document.querySelectorAll('.status-btn').forEach(x =>
       x.classList.toggle('active', x.dataset.status === DEFAULT_PROFILE.status));
@@ -2128,7 +3011,7 @@
       state.profile = {
         display_name: mine.display_name || '',
         bio: mine.bio || '',
-        avatar_emoji: mine.avatar_emoji || '🍀',
+        avatar_url: mine.avatar_url || '',
         status: mine.status || 'online',
         tags: mine.tags || []
       };
@@ -2152,7 +3035,8 @@
 
     setupProfileInputs();
     setupStatusPicker();
-    renderEmojiPicker();
+    setupAvatarUploader();
+    refreshAvatarUI();
     renderTagCloud();
     renderPreview();
     renderCards();
@@ -2163,6 +3047,38 @@
   loadInitial();
 
 </script>
+
+  <!-- Profile detail modal -->
+  <div class="modal-backdrop" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="modalName">
+    <div class="modal-sheet" role="document">
+      <button class="modal-close" type="button" id="modalClose" aria-label="閉じる">×</button>
+      <div class="modal-hero" id="modalHero">
+        <span class="online" id="modalOnline">online</span>
+        <img id="modalImg" alt="" style="display:none;">
+        <span id="modalEmoji"></span>
+      </div>
+      <div class="modal-body">
+        <div class="modal-name" id="modalName"></div>
+        <div class="modal-bio" id="modalBio"></div>
+        <div class="modal-tags" id="modalTags"></div>
+        <div class="modal-stats">
+          <div class="modal-stat">
+            <div class="label">みんなから</div>
+            <div class="value">♡<span id="modalLikes">0</span></div>
+          </div>
+          <div class="modal-stat" id="modalMatchStat">
+            <div class="label">あなたとの相性</div>
+            <div class="value"><span id="modalMatchPct">0</span><span class="unit">%</span></div>
+          </div>
+        </div>
+        <div class="modal-similar" id="modalSimilar"></div>
+        <div class="modal-actions">
+          <button type="button" class="like-btn" id="modalLikeBtn">♡ いいねする</button>
+          <button type="button" class="fav-btn" id="modalFavBtn">★ お気に入り</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>
