@@ -950,6 +950,55 @@
     padding: 6px 4px;
   }
 
+  /* Tag suggestions row */
+  .tag-suggest-wrap {
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: var(--bg-soft);
+    border-radius: 14px;
+  }
+  .tag-suggest-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-mute);
+    margin-bottom: 6px;
+  }
+  .tag-suggest-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag-suggest-pill {
+    background: white;
+    color: var(--ink-soft);
+    border: 1px solid var(--bg-soft);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tag-suggest-pill::before {
+    content: '#';
+    color: var(--pink);
+    margin-right: 2px;
+  }
+  .tag-suggest-pill:hover {
+    background: var(--pink-light);
+    border-color: var(--pink);
+    color: var(--pink-deep);
+    transform: translateY(-1px);
+  }
+  .tag-suggest-pill.taken {
+    opacity: 0.35;
+    cursor: not-allowed;
+    text-decoration: line-through;
+    pointer-events: none;
+  }
+
   /* ===== Profile detail modal ===== */
   .modal-backdrop {
     position: fixed;
@@ -1182,6 +1231,432 @@
     .modal-sheet { border-radius: 0; max-width: 100%; min-height: 100vh; }
     .modal-hero { border-radius: 0; }
   }
+
+  /* ===== My Page section ===== */
+  .mypage-section { padding-top: 24px; }
+  .mypage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 18px;
+  }
+  .mypage-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  }
+  .mypage-profile { grid-column: 1 / -1; }
+  @media (max-width: 760px) {
+    .mypage-grid { grid-template-columns: 1fr; }
+  }
+
+  .mp-section-title {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .mp-stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .mp-stat {
+    background: var(--bg-soft);
+    border-radius: 14px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+  .mp-stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink-mute);
+    margin-bottom: 4px;
+  }
+  .mp-stat-value {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--pink-deep);
+    line-height: 1;
+  }
+
+  .mp-liker-list, .mp-convo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .mp-empty {
+    color: var(--ink-mute);
+    font-size: 13px;
+    text-align: center;
+    padding: 16px 8px;
+    font-weight: 500;
+  }
+
+  .mp-liker, .mp-convo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 12px;
+    background: var(--bg-soft);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .mp-liker:hover, .mp-convo:hover {
+    background: var(--pink-light);
+    transform: translateX(2px);
+  }
+  .mp-liker .mp-av, .mp-convo .mp-av {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    border: 2px solid white;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .mp-liker .mp-av img, .mp-convo .mp-av img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .mp-liker .mp-info, .mp-convo .mp-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .mp-liker .mp-name, .mp-convo .mp-name {
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .mp-liker .mp-meta, .mp-convo .mp-meta {
+    font-size: 11px;
+    color: var(--ink-mute);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .mp-convo .mp-unread {
+    background: var(--pink);
+    color: white;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 2px 7px;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  /* My profile card (in my page) */
+  .my-card-display {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 6px;
+  }
+  .my-card-display .my-av {
+    width: 120px;
+    height: 120px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--peach-light), var(--pink-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    overflow: hidden;
+    border: 4px solid white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    flex-shrink: 0;
+  }
+  .my-card-display .my-av img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .my-card-display .my-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .my-card-display .my-name {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .my-card-display .my-status {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--mint-deep);
+    background: var(--mint);
+    padding: 2px 10px;
+    border-radius: 999px;
+    margin-bottom: 8px;
+  }
+  .my-card-display .my-status.off { color: var(--ink-mute); background: var(--bg-soft); }
+  .my-card-display .my-bio {
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .my-card-display .my-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .my-empty-profile {
+    text-align: center;
+    padding: 24px;
+    color: var(--ink-mute);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .my-empty-profile .emo { font-size: 40px; margin-bottom: 8px; }
+  .my-edit-btn {
+    background: var(--bg-soft);
+    border: 1px solid var(--bg-soft);
+    color: var(--ink);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: all 0.15s;
+  }
+  .my-edit-btn:hover {
+    background: var(--pink-light);
+    border-color: var(--pink);
+    color: var(--pink-deep);
+  }
+
+  /* ===== Chat modal ===== */
+  .chat-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(40, 24, 30, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 1100;
+    animation: modalFade 0.2s ease;
+  }
+  .chat-modal.open { display: flex; }
+
+  .chat-sheet {
+    background: white;
+    border-radius: 24px 24px 0 0;
+    width: 100%;
+    max-width: 560px;
+    height: 80vh;
+    max-height: 720px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+    animation: chatRise 0.25s ease;
+  }
+  @keyframes chatRise {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+
+  .chat-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, var(--peach-light), var(--pink-light));
+    border-bottom: 1px solid var(--bg-soft);
+    flex-shrink: 0;
+  }
+  .chat-header .chat-back {
+    background: rgba(255,255,255,0.6);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--ink);
+    flex-shrink: 0;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  .chat-header .chat-back:hover { background: white; }
+  .chat-header .chat-av {
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 2px solid white;
+    flex-shrink: 0;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .chat-header .chat-av img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .chat-header .chat-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .chat-header .chat-name {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .chat-header .chat-status {
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--bg);
+  }
+  .chat-loading {
+    text-align: center;
+    color: var(--ink-mute);
+    font-size: 12px;
+    padding: 12px;
+  }
+  .chat-msg {
+    max-width: 78%;
+    padding: 9px 13px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-break: break-word;
+    white-space: pre-wrap;
+    animation: msgPop 0.2s ease;
+  }
+  @keyframes msgPop {
+    from { transform: translateY(6px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+  .chat-msg.them {
+    align-self: flex-start;
+    background: white;
+    color: var(--ink);
+    border-bottom-left-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .chat-msg.me {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--peach), var(--pink));
+    color: white;
+    border-bottom-right-radius: 6px;
+    box-shadow: 0 4px 12px rgba(255, 122, 168, 0.25);
+  }
+  .chat-msg-time {
+    font-size: 10px;
+    color: var(--ink-mute);
+    align-self: center;
+    padding: 4px 0;
+  }
+  .chat-empty {
+    text-align: center;
+    color: var(--ink-mute);
+    font-size: 13px;
+    padding: 32px 16px;
+    line-height: 1.6;
+  }
+  .chat-empty .emo { font-size: 40px; margin-bottom: 8px; }
+
+  .chat-input-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 12px 14px;
+    background: white;
+    border-top: 1px solid var(--bg-soft);
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1;
+    border: 2px solid var(--bg-soft);
+    border-radius: 18px;
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--bg-soft);
+    outline: none;
+    resize: none;
+    max-height: 100px;
+    min-height: 40px;
+    line-height: 1.4;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .chat-input:focus {
+    border-color: var(--pink);
+    background: white;
+  }
+  .chat-send {
+    background: linear-gradient(135deg, var(--peach), var(--pink));
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 900;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(255, 122, 168, 0.3);
+    transition: transform 0.15s, opacity 0.15s;
+    font-family: inherit;
+  }
+  .chat-send:hover { transform: scale(1.06); }
+  .chat-send:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  @media (max-width: 520px) {
+    .chat-sheet { height: 100vh; max-height: 100vh; border-radius: 0; }
+  }
+
+  /* Chat trigger button on profile modal */
+  .modal-actions .chat-btn {
+    background: linear-gradient(135deg, var(--lavender, #b9a8e8), var(--sky, #a8d8e8));
+    color: white;
+    box-shadow: 0 4px 12px rgba(180, 168, 232, 0.35);
+  }
+  .modal-actions .chat-btn:hover { transform: translateY(-2px); }
 
   /* ===== Home grid (MAIN) ===== */
   .home-section {
@@ -1693,6 +2168,7 @@
       <ul>
         <li><a href="#" class="is-active">ホーム</a></li>
         <li><a href="#favs-anchor">お気に入り</a></li>
+        <li><a href="#mypage-anchor" id="navMyPage">マイページ</a></li>
         <li><a href="#how-anchor">使い方</a></li>
       </ul>
     </nav>
@@ -1862,6 +2338,58 @@
   </div>
 </section>
 
+<!-- ===== My Page ===== -->
+<section class="home-section mypage-section" id="mypage-anchor">
+  <div class="home-head">
+    <div>
+      <h2>マイページ <span class="heart-em">♡</span></h2>
+      <p class="home-sub" id="myPageSub">あなたの活動はここで確認できるよ ✨</p>
+    </div>
+  </div>
+
+  <div class="mypage-grid">
+    <!-- My profile card -->
+    <div class="mypage-card mypage-profile" id="myPageProfile">
+      <!-- inserted by JS -->
+    </div>
+
+    <!-- Stats -->
+    <div class="mypage-card mypage-stats">
+      <div class="mp-section-title">あなたの記録</div>
+      <div class="mp-stat-row">
+        <div class="mp-stat">
+          <div class="mp-stat-label">もらった ♡</div>
+          <div class="mp-stat-value"><span id="mpLikesGot">0</span></div>
+        </div>
+        <div class="mp-stat">
+          <div class="mp-stat-label">送った ♡</div>
+          <div class="mp-stat-value"><span id="mpLikesSent">0</span></div>
+        </div>
+        <div class="mp-stat">
+          <div class="mp-stat-label">お気に入り</div>
+          <div class="mp-stat-value"><span id="mpFavs">0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liked by -->
+    <div class="mypage-card mypage-liked-by">
+      <div class="mp-section-title">あなたに ♡ してくれた子</div>
+      <div class="mp-liker-list" id="mpLikerList">
+        <!-- inserted by JS -->
+      </div>
+    </div>
+
+    <!-- Conversations -->
+    <div class="mypage-card mypage-convos">
+      <div class="mp-section-title">トーク</div>
+      <div class="mp-convo-list" id="mpConvoList">
+        <!-- inserted by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== How it works ===== -->
 <section class="how-section" id="how-anchor">
   <div class="how-grid">
@@ -1944,6 +2472,13 @@
   // ===== Constants =====
   const TAG_MAX_LEN = 8;   // max characters per tag
   const TAG_MAX_COUNT = 10; // max tags per profile
+  const TAG_SUGGESTIONS = [
+    '雑談', 'ワールド巡り', 'お砂糖', 'お塩', '集会',
+    '写真', '改変', 'シェーダー', '無言', '寝落ち',
+    '声出す', 'おさんぽ', 'カフェ', 'DJ', 'ダンス',
+    'ものづくり', 'ゲーム', '夜型', '朝型', '映画鑑賞',
+    '読書', 'コスプレ', 'バーチャル撮影', 'クリエイター', 'はじめてさん歓迎'
+  ];
 
   const EMOJI_CHOICES = ['🍑','🌷','🐰','🌻','☕','🌙','🎀','🌟','🍀','🧸','🍓','🦋','🌸','🍰','☁️','🐱'];
   const DEFAULT_PROFILE = { display_name: '', bio: '', avatar_url: '', status: 'online', tags: [] };
@@ -1994,23 +2529,37 @@
     allProfiles: [],            // 全員のプロフィール（自分含む）
     myLikes: new Set(),         // 自分が like した profile_id の集合
     myFavs: new Set(),          // 自分が fav した profile_id の集合
+    likedBy: [],                // 自分にいいねしてくれた人の profile_id 配列
     sort: 'match',
     favOnly: false,
     loading: false,
     published: false,           // 自分のプロフィールが既にDBに保存されているか
-    tagInputOpen: false         // タグ追加の入力欄が開いているか
+    tagInputOpen: false,        // タグ追加の入力欄が開いているか
+    // chat
+    chatPeerId: null,           // 現在チャット中の相手の profile.id
+    chatMessages: [],           // 現在のチャットのメッセージ配列
+    chatChannel: null,          // 現在の Realtime チャンネル
+    // last-seen markers for unread indicators: { peerId: lastSeenISO }
+    lastSeen: {}
   };
 
-  // Persist UI-only state (sort/favOnly + tag selections) locally
+  // Persist UI-only state (sort/favOnly + tag selections + chat last-seen) locally
   const KEY_UI = 'pocotto:ui';
+  const KEY_LAST_SEEN = 'pocotto:last_seen';
   function loadUI() {
     try {
       const raw = localStorage.getItem(KEY_UI);
-      if (!raw) return;
-      const d = JSON.parse(raw);
-      if (Array.isArray(d.selectedTags)) state.selectedTags = new Set(d.selectedTags);
-      if (typeof d.sort === 'string') state.sort = d.sort;
-      if (typeof d.favOnly === 'boolean') state.favOnly = d.favOnly;
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (Array.isArray(d.selectedTags)) state.selectedTags = new Set(d.selectedTags);
+        if (typeof d.sort === 'string') state.sort = d.sort;
+        if (typeof d.favOnly === 'boolean') state.favOnly = d.favOnly;
+      }
+      const rawSeen = localStorage.getItem(KEY_LAST_SEEN);
+      if (rawSeen) {
+        const parsed = JSON.parse(rawSeen);
+        if (parsed && typeof parsed === 'object') state.lastSeen = parsed;
+      }
     } catch (e) {}
   }
   function saveUI() {
@@ -2020,6 +2569,11 @@
         sort: state.sort,
         favOnly: state.favOnly
       }));
+    } catch (e) {}
+  }
+  function saveLastSeen() {
+    try {
+      localStorage.setItem(KEY_LAST_SEEN, JSON.stringify(state.lastSeen));
     } catch (e) {}
   }
 
@@ -2054,6 +2608,134 @@
     if (favsRes.error)  console.warn('favs fetch err',  favsRes.error);
     state.myLikes = new Set((likesRes.data || []).map(r => r.to_profile));
     state.myFavs  = new Set((favsRes.data  || []).map(r => r.to_profile));
+  }
+
+  // Fetch profile ids of users who liked me
+  async function fetchLikedBy() {
+    if (!state.myProfileId) { state.likedBy = []; return; }
+    // likes.from_secret -> resolve profile id via profiles
+    const { data, error } = await supa
+      .from('likes')
+      .select('from_secret')
+      .eq('to_profile', state.myProfileId);
+    if (error) { console.warn('likedBy fetch err', error); state.likedBy = []; return; }
+    const secrets = [...new Set((data || []).map(r => r.from_secret))];
+    if (secrets.length === 0) { state.likedBy = []; return; }
+    // Lookup profile ids for these secrets
+    const { data: pData, error: pErr } = await supa
+      .from('profiles')
+      .select('id, owner_secret')
+      .in('owner_secret', secrets);
+    if (pErr) { console.warn('likedBy profile lookup err', pErr); state.likedBy = []; return; }
+    state.likedBy = (pData || []).map(p => p.id);
+  }
+
+  // Fetch all messages between me and a peer (in this case 'peer' is a profile id).
+  // I am identified by MY_SECRET (sender) and state.myProfileId (receiver).
+  async function fetchConversation(peerProfileId) {
+    if (!state.myProfileId) return [];
+    const peer = state.allProfiles.find(p => p.id === peerProfileId);
+    if (!peer) return [];
+    // peer profile id known. To resolve "peer's owner_secret" we need to query profiles.
+    const { data: peerRow, error: peerErr } = await supa
+      .from('profiles')
+      .select('owner_secret')
+      .eq('id', peerProfileId)
+      .maybeSingle();
+    if (peerErr || !peerRow) { console.warn('peer secret lookup err', peerErr); return []; }
+    const peerSecret = peerRow.owner_secret;
+    // Messages: (from_secret=me AND to_profile=peer) OR (from_secret=peer AND to_profile=me)
+    const orFilter = `and(from_secret.eq.${MY_SECRET},to_profile.eq.${peerProfileId}),and(from_secret.eq.${peerSecret},to_profile.eq.${state.myProfileId})`;
+    const { data, error } = await supa
+      .from('messages')
+      .select('*')
+      .or(orFilter)
+      .order('created_at', { ascending: true })
+      .limit(500);
+    if (error) { console.warn('fetchConversation err', error); return []; }
+    return data || [];
+  }
+
+  // Fetch all conversations where I'm involved (for "my page" list).
+  // Returns [{ peerProfileId, peerSecret, last_msg, last_at, unread_count }]
+  async function fetchMyConversations() {
+    if (!state.myProfileId) return [];
+    // Messages I sent (any to_profile) OR messages sent to me (any from_secret)
+    const orFilter = `from_secret.eq.${MY_SECRET},to_profile.eq.${state.myProfileId}`;
+    const { data, error } = await supa
+      .from('messages')
+      .select('*')
+      .or(orFilter)
+      .order('created_at', { ascending: false })
+      .limit(500);
+    if (error) { console.warn('fetchMyConversations err', error); return []; }
+    const all = data || [];
+    // Group by peer
+    // For msgs I sent: peer is to_profile (a profile id)
+    // For msgs sent to me: peer is from_secret (owner_secret)
+    // We need a consistent key. Resolve sender secret -> profile id via state.allProfiles when possible.
+    const secretToId = new Map();
+    state.allProfiles.forEach(p => { if (p.owner_secret) secretToId.set(p.owner_secret, p.id); });
+    // We don't have owner_secret in profiles_with_counts (it's not exposed). So we may need to look up secrets.
+    // Pull unique unknown secrets and resolve them in one query.
+    const unknownSecrets = new Set();
+    all.forEach(m => {
+      if (m.from_secret !== MY_SECRET && !secretToId.has(m.from_secret)) {
+        unknownSecrets.add(m.from_secret);
+      }
+    });
+    if (unknownSecrets.size > 0) {
+      const { data: pRows } = await supa
+        .from('profiles')
+        .select('id, owner_secret')
+        .in('owner_secret', [...unknownSecrets]);
+      (pRows || []).forEach(r => secretToId.set(r.owner_secret, r.id));
+    }
+    // Build conversations map keyed by peerProfileId
+    const convo = new Map();
+    all.forEach(m => {
+      let peerId;
+      if (m.from_secret === MY_SECRET) {
+        peerId = m.to_profile;
+      } else {
+        peerId = secretToId.get(m.from_secret);
+      }
+      if (!peerId || peerId === state.myProfileId) return; // skip self-chat
+      if (!convo.has(peerId)) {
+        convo.set(peerId, {
+          peerProfileId: peerId,
+          last_msg: m.body,
+          last_at: m.created_at,
+          last_from_me: m.from_secret === MY_SECRET,
+          unread_count: 0
+        });
+      }
+      // Track unread (messages sent TO me, after lastSeen[peerId])
+      if (m.from_secret !== MY_SECRET) {
+        const seenAt = state.lastSeen[peerId];
+        if (!seenAt || new Date(m.created_at) > new Date(seenAt)) {
+          convo.get(peerId).unread_count++;
+        }
+      }
+    });
+    return [...convo.values()].sort((a, b) => new Date(b.last_at) - new Date(a.last_at));
+  }
+
+  async function sendMessage(peerProfileId, body) {
+    const trimmed = String(body || '').trim();
+    if (!trimmed) return null;
+    if (!state.myProfileId) return null;
+    const { data, error } = await supa
+      .from('messages')
+      .insert({
+        from_secret: MY_SECRET,
+        to_profile: peerProfileId,
+        body: trimmed.slice(0, 500)
+      })
+      .select()
+      .single();
+    if (error) { console.warn('sendMessage err', error); return null; }
+    return data;
   }
 
   async function upsertMyProfile() {
@@ -2228,6 +2910,29 @@
         renderTagCloud();
       });
       cloud.appendChild(add);
+    }
+
+    // ----- Suggestion pills (always visible if room remains) -----
+    if (tags.length < TAG_MAX_COUNT) {
+      const taken = new Set(tags);
+      const wrap = document.createElement('div');
+      wrap.className = 'tag-suggest-wrap';
+      wrap.innerHTML = '<div class="tag-suggest-label">よく使われるタグから選んでもOK ✨</div>';
+      const list = document.createElement('div');
+      list.className = 'tag-suggest-list';
+      TAG_SUGGESTIONS.forEach(t => {
+        if (t.length > TAG_MAX_LEN) return;
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'tag-suggest-pill' + (taken.has(t) ? ' taken' : '');
+        b.textContent = t;
+        if (!taken.has(t)) {
+          b.addEventListener('click', () => addTag(t));
+        }
+        list.appendChild(b);
+      });
+      wrap.appendChild(list);
+      cloud.appendChild(wrap);
     }
 
     document.getElementById('selCount').textContent = tags.length;
@@ -2608,6 +3313,326 @@
       updateFavCounter();
       renderCards();
     });
+
+    // Chat trigger from profile modal
+    document.getElementById('modalChatBtn').addEventListener('click', () => {
+      if (!modalUserId) return;
+      if (!state.myProfileId) {
+        flashSaveStatus('need-profile-for-chat');
+        return;
+      }
+      const peerId = modalUserId;
+      closeProfileModal();
+      openChatModal(peerId);
+    });
+  }
+
+  // ===== Chat modal =====
+  function openChatModal(peerProfileId) {
+    state.chatPeerId = peerProfileId;
+    const peer = state.allProfiles.find(p => p.id === peerProfileId);
+    if (!peer) return;
+
+    const m = document.getElementById('chatModal');
+    m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // Header
+    document.getElementById('chatName').textContent = peer.display_name || '';
+    const statusText = peer.status === 'online' ? 'オンライン' : (peer.status === 'busy' ? 'busy' : 'おやすみ中');
+    document.getElementById('chatStatus').textContent = statusText;
+    const chatAvImg = document.getElementById('chatAvImg');
+    const chatAvEmoji = document.getElementById('chatAvEmoji');
+    if (peer.avatar_url) {
+      chatAvImg.src = peer.avatar_url;
+      chatAvImg.style.display = 'block';
+      chatAvEmoji.textContent = '';
+    } else {
+      chatAvImg.removeAttribute('src');
+      chatAvImg.style.display = 'none';
+      chatAvEmoji.textContent = peer.avatar_emoji || '🍀';
+    }
+
+    // Load messages
+    loadChatMessages();
+    // Subscribe to realtime
+    subscribeChatRealtime(peerProfileId);
+    // Focus the input on desktop only (avoid keyboard popping on mobile immediately)
+    setTimeout(() => {
+      const input = document.getElementById('chatInput');
+      if (window.innerWidth > 760) input && input.focus();
+    }, 100);
+  }
+
+  async function loadChatMessages() {
+    const messagesEl = document.getElementById('chatMessages');
+    messagesEl.innerHTML = '<div class="chat-loading">読み込み中…</div>';
+    const list = await fetchConversation(state.chatPeerId);
+    state.chatMessages = list;
+    renderChatMessages();
+    // Update last-seen
+    if (list.length > 0) {
+      state.lastSeen[state.chatPeerId] = new Date().toISOString();
+      saveLastSeen();
+      // Refresh my-page convo list (unread badges)
+      renderMyConversations();
+    }
+  }
+
+  function renderChatMessages() {
+    const messagesEl = document.getElementById('chatMessages');
+    if (state.chatMessages.length === 0) {
+      messagesEl.innerHTML = '<div class="chat-empty"><div class="emo">💬</div>まだメッセージはないよ ✨<br>最初のひとことを送ってみよう！</div>';
+      return;
+    }
+    messagesEl.innerHTML = '';
+    let lastDate = '';
+    state.chatMessages.forEach(m => {
+      const d = new Date(m.created_at);
+      const dateLabel = formatChatDate(d);
+      if (dateLabel !== lastDate) {
+        const sep = document.createElement('div');
+        sep.className = 'chat-msg-time';
+        sep.textContent = dateLabel;
+        messagesEl.appendChild(sep);
+        lastDate = dateLabel;
+      }
+      const el = document.createElement('div');
+      el.className = 'chat-msg ' + (m.from_secret === MY_SECRET ? 'me' : 'them');
+      el.textContent = m.body;
+      messagesEl.appendChild(el);
+    });
+    // Scroll to bottom
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function formatChatDate(d) {
+    const now = new Date();
+    const sameDay = d.getFullYear() === now.getFullYear()
+      && d.getMonth() === now.getMonth()
+      && d.getDate() === now.getDate();
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    if (sameDay) return `今日 ${hh}:${mm}`;
+    const m = d.getMonth() + 1;
+    const day = d.getDate();
+    return `${m}/${day} ${hh}:${mm}`;
+  }
+
+  function closeChatModal() {
+    const m = document.getElementById('chatModal');
+    m.classList.remove('open');
+    document.body.style.overflow = '';
+    // Update last-seen
+    if (state.chatPeerId) {
+      state.lastSeen[state.chatPeerId] = new Date().toISOString();
+      saveLastSeen();
+    }
+    // Unsubscribe realtime
+    if (state.chatChannel) {
+      try { supa.removeChannel(state.chatChannel); } catch (e) {}
+      state.chatChannel = null;
+    }
+    state.chatPeerId = null;
+    state.chatMessages = [];
+    // Refresh my-page convo list (unread badges)
+    renderMyConversations();
+  }
+
+  function subscribeChatRealtime(peerProfileId) {
+    // Clean up previous channel
+    if (state.chatChannel) {
+      try { supa.removeChannel(state.chatChannel); } catch (e) {}
+      state.chatChannel = null;
+    }
+    // Subscribe to all message inserts, then filter client-side.
+    // (We can't easily filter on both directions in a single server filter.)
+    const channel = supa.channel('chat:' + peerProfileId)
+      .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          const m = payload.new;
+          if (!m || !state.chatPeerId) return;
+          // Is this message part of the current conversation?
+          const peerId = state.chatPeerId;
+          const peer = state.allProfiles.find(p => p.id === peerId);
+          // Match if (to me from peer) or (from me to peer)
+          const isFromMe = m.from_secret === MY_SECRET && m.to_profile === peerId;
+          const isToMe = m.to_profile === state.myProfileId && peer
+            // we don't know peer secret in state, so we'll accept any "to me" message
+            // and verify by re-checking: if we already have this id, skip
+            ;
+          if (!isFromMe && !isToMe) return;
+          // Skip if we already have this message id (e.g., optimistic insert)
+          if (state.chatMessages.some(x => x.id === m.id)) return;
+          state.chatMessages.push(m);
+          renderChatMessages();
+          // Touch last-seen since we're viewing it
+          state.lastSeen[peerId] = new Date().toISOString();
+          saveLastSeen();
+        })
+      .subscribe();
+    state.chatChannel = channel;
+  }
+
+  function setupChatModal() {
+    document.getElementById('chatBack').addEventListener('click', closeChatModal);
+    document.getElementById('chatModal').addEventListener('click', (e) => {
+      // Click on backdrop closes
+      if (e.target.id === 'chatModal') closeChatModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('chatModal').classList.contains('open')) {
+        closeChatModal();
+      }
+    });
+    const input = document.getElementById('chatInput');
+    const send = document.getElementById('chatSend');
+    // Auto-grow textarea
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = Math.min(100, input.scrollHeight) + 'px';
+    });
+    // Enter to send (Shift+Enter for newline)
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        send.click();
+      }
+    });
+    send.addEventListener('click', async () => {
+      const body = input.value.trim();
+      if (!body || !state.chatPeerId) return;
+      send.disabled = true;
+      const sent = await sendMessage(state.chatPeerId, body);
+      send.disabled = false;
+      if (sent) {
+        input.value = '';
+        input.style.height = 'auto';
+        // Optimistic: add if not already (realtime may also deliver it)
+        if (!state.chatMessages.some(x => x.id === sent.id)) {
+          state.chatMessages.push(sent);
+          renderChatMessages();
+        }
+      }
+    });
+  }
+
+  // ===== My Page rendering =====
+  async function renderMyPage() {
+    renderMyPageProfile();
+    renderMyPageStats();
+    await renderMyPageLikers();
+    await renderMyConversations();
+  }
+
+  function renderMyPageProfile() {
+    const el = document.getElementById('myPageProfile');
+    if (!state.myProfileId || !state.published) {
+      el.innerHTML = `
+        <div class="my-empty-profile">
+          <div class="emo">🌱</div>
+          まだあなたのプロフィールは公開されてないよ。<br>
+          上の「あなたのプロフィールをつくろう」から、なまえとアイコンを設定してね ✨
+        </div>
+      `;
+      return;
+    }
+    const p = state.profile;
+    const me = state.allProfiles.find(x => x.id === state.myProfileId);
+    const statusText = p.status === 'online' ? 'online' : (p.status === 'busy' ? 'busy' : 'おやすみ');
+    const statusOff = p.status !== 'online';
+    const avInner = p.avatar_url
+      ? `<img src="${escapeHTML(p.avatar_url)}" alt="">`
+      : '🌸';
+    const tagsHtml = (p.tags || []).length
+      ? (p.tags || []).map(t => `<span class="pick-tag">#${escapeHTML(t)}</span>`).join('')
+      : '<span class="pick-tag muted">タグはまだないよ</span>';
+    el.innerHTML = `
+      <div class="my-card-display">
+        <div class="my-av">${avInner}</div>
+        <div class="my-info">
+          <div class="my-name">${escapeHTML(p.display_name)}</div>
+          <span class="my-status${statusOff ? ' off' : ''}">${statusText}</span>
+          <div class="my-bio">${escapeHTML(p.bio || 'まだ自己紹介はないみたい ✨')}</div>
+          <div class="my-tags">${tagsHtml}</div>
+          <button type="button" class="my-edit-btn" id="myEditBtn">✎ 編集する</button>
+        </div>
+      </div>
+    `;
+    document.getElementById('myEditBtn').addEventListener('click', () => {
+      document.getElementById('inpName').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+
+  function renderMyPageStats() {
+    const me = state.allProfiles.find(p => p.id === state.myProfileId);
+    document.getElementById('mpLikesGot').textContent = (me && me.likes_count) || 0;
+    document.getElementById('mpLikesSent').textContent = state.myLikes.size;
+    document.getElementById('mpFavs').textContent = state.myFavs.size;
+  }
+
+  async function renderMyPageLikers() {
+    await fetchLikedBy();
+    const el = document.getElementById('mpLikerList');
+    if (state.likedBy.length === 0) {
+      el.innerHTML = '<div class="mp-empty">まだ ♡ してくれた子はいないみたい ✨</div>';
+      return;
+    }
+    el.innerHTML = '';
+    state.likedBy.forEach(id => {
+      const u = state.allProfiles.find(p => p.id === id);
+      if (!u) return;
+      const row = document.createElement('div');
+      row.className = 'mp-liker';
+      const avInner = u.avatar_url
+        ? `<img src="${escapeHTML(u.avatar_url)}" alt="">`
+        : (u.avatar_emoji || '🍀');
+      row.innerHTML = `
+        <div class="mp-av">${avInner}</div>
+        <div class="mp-info">
+          <div class="mp-name">${escapeHTML(u.display_name)}</div>
+          <div class="mp-meta">${escapeHTML(u.bio || '')}</div>
+        </div>
+      `;
+      row.addEventListener('click', () => openProfileModal(u.id));
+      el.appendChild(row);
+    });
+  }
+
+  async function renderMyConversations() {
+    const el = document.getElementById('mpConvoList');
+    if (!el) return;
+    if (!state.myProfileId) {
+      el.innerHTML = '<div class="mp-empty">プロフィールを公開するとトークができるよ ✨</div>';
+      return;
+    }
+    const convos = await fetchMyConversations();
+    if (convos.length === 0) {
+      el.innerHTML = '<div class="mp-empty">まだトークはないよ。気になる子に「チャットしませんか？」してみよう ✨</div>';
+      return;
+    }
+    el.innerHTML = '';
+    convos.forEach(c => {
+      const u = state.allProfiles.find(p => p.id === c.peerProfileId);
+      if (!u) return;
+      const row = document.createElement('div');
+      row.className = 'mp-convo';
+      const avInner = u.avatar_url
+        ? `<img src="${escapeHTML(u.avatar_url)}" alt="">`
+        : (u.avatar_emoji || '🍀');
+      const preview = (c.last_from_me ? 'あなた: ' : '') + (c.last_msg || '');
+      row.innerHTML = `
+        <div class="mp-av">${avInner}</div>
+        <div class="mp-info">
+          <div class="mp-name">${escapeHTML(u.display_name)}</div>
+          <div class="mp-meta">${escapeHTML(preview).slice(0, 60)}</div>
+        </div>
+        ${c.unread_count > 0 ? `<span class="mp-unread">${c.unread_count}</span>` : ''}
+      `;
+      row.addEventListener('click', () => openChatModal(c.peerProfileId));
+      el.appendChild(row);
+    });
   }
 
   // ===== Sparkle =====
@@ -2646,6 +3671,7 @@
     else if (kind === 'published') { span.textContent = '公開したよ！みんなの一覧に並んでる ♡'; ico.textContent = '🎉'; }
     else if (kind === 'error') { span.textContent = '保存に失敗… もう一度押してみてね'; ico.textContent = '⚠️'; }
     else if (kind === 'need-avatar') { span.textContent = 'アイコン画像をアップロードしてね'; ico.textContent = '📷'; }
+    else if (kind === 'need-profile-for-chat') { span.textContent = '先にプロフィールを公開してね（なまえ＋アイコン）'; ico.textContent = '💬'; }
     clearTimeout(saveFlashTimer);
     saveFlashTimer = setTimeout(() => {
       el.classList.remove('flash');
@@ -3003,6 +4029,7 @@
   async function reloadFeed() {
     state.allProfiles = await fetchAllProfiles();
     renderCards();
+    renderMyPage();
   }
 
   async function loadInitial() {
@@ -3039,11 +4066,13 @@
     setupStatusPicker();
     setupAvatarUploader();
     setupProfileModal();
+    setupChatModal();
     refreshAvatarUI();
     renderTagCloud();
     renderPreview();
     renderCards();
     updateFavCounter();
+    renderMyPage();
     refreshSaveStatusBaseline();
   }
 
@@ -3079,6 +4108,30 @@
           <button type="button" class="like-btn" id="modalLikeBtn">♡ いいねする</button>
           <button type="button" class="fav-btn" id="modalFavBtn">★ お気に入り</button>
         </div>
+        <div class="modal-actions" style="margin-top: 10px;">
+          <button type="button" class="chat-btn" id="modalChatBtn">💬 チャットしませんか？</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat modal -->
+  <div class="chat-modal" id="chatModal" role="dialog" aria-modal="true" aria-labelledby="chatName">
+    <div class="chat-sheet">
+      <div class="chat-header">
+        <button type="button" class="chat-back" id="chatBack" aria-label="閉じる">←</button>
+        <div class="chat-av" id="chatAv"><span id="chatAvEmoji"></span><img id="chatAvImg" alt="" style="display:none;"></div>
+        <div class="chat-info">
+          <div class="chat-name" id="chatName"></div>
+          <div class="chat-status" id="chatStatus"></div>
+        </div>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-loading">読み込み中…</div>
+      </div>
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chatInput" rows="1" maxlength="500" placeholder="メッセージを入力…"></textarea>
+        <button type="button" class="chat-send" id="chatSend" aria-label="送信">➤</button>
       </div>
     </div>
   </div>
