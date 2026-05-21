@@ -2582,6 +2582,7 @@
     const { data, error } = await supa
       .from('profiles_with_counts')
       .select('*')
+      .eq('is_seed', false)
       .order('created_at', { ascending: false });
     if (error) { console.warn('fetchAllProfiles error', error); return []; }
     return data || [];
@@ -3027,16 +3028,6 @@
     // Exclude self from the "others" feed
     let pool = state.allProfiles.filter(u => u.id !== state.myProfileId);
 
-    // --- Seed users handling ---
-    // If at least one real (non-seed) user other than the current user exists,
-    // hide all seed users so the feed shows real people only.
-    // If no real users exist yet, keep the seed users visible so the page isn't empty.
-    const realUsersExist = state.allProfiles.some(u => !u.is_seed && u.id !== state.myProfileId);
-    if (realUsersExist) {
-      pool = pool.filter(u => !u.is_seed);
-    }
-    // --- end seed handling ---
-
     let enriched = pool.map(u => ({ ...u, ...calcMatch(u) }));
 
     if (state.favOnly) enriched = enriched.filter(u => state.myFavs.has(u.id));
@@ -3063,11 +3054,8 @@
       cm.innerHTML = `<span>選んだタグに合う <strong>${matched}</strong> 人の子がいるよ 💞</span>`;
     }
 
-    // Update online count badge (apply seed filter so the count matches the visible cards)
-    const visibleForCount = realUsersExist
-      ? state.allProfiles.filter(u => !u.is_seed)
-      : state.allProfiles;
-    const onlineN = visibleForCount.filter(u => u.status === 'online').length;
+    // Update online count badge
+    const onlineN = state.allProfiles.filter(u => u.status === 'online').length;
     const onCountEl = document.getElementById('online-count');
     if (onCountEl) onCountEl.textContent = onlineN;
 
