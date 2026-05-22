@@ -291,6 +291,46 @@
     color: #2f8a64;
   }
 
+  .hero-badge.badge-visits {
+    background: var(--lavender, #ece7fb);
+    border-color: #b9a8e8;
+    color: #6b54b0;
+  }
+
+  .everyone-count {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    color: var(--pink-deep);
+    background: var(--pink-light);
+    padding: 8px 16px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .me-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, var(--peach), var(--pink));
+    color: white;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 3px 10px;
+    border-radius: 999px;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(255, 122, 168, 0.3);
+  }
+
+  .pick-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--ink-mute);
+    font-size: 14px;
+    padding: 40px 16px;
+    font-weight: 500;
+  }
+
   .hero-badge .dot-anim {
     width: 8px;
     height: 8px;
@@ -955,8 +995,31 @@
     display: flex;
     gap: 10px;
     justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
     margin-top: 20px;
     padding: 0 24px 4px;
+  }
+  .save-now-btn {
+    background: white;
+    color: var(--pink-deep);
+    border: 2px solid var(--pink);
+    border-radius: 16px;
+    padding: 13px 24px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .save-now-btn:hover {
+    background: var(--pink-light);
+    transform: translateY(-2px);
+  }
+  .save-now-btn.saved-flash {
+    background: var(--mint);
+    color: var(--mint-deep);
+    border-color: var(--mint-deep);
   }
   .publish-btn {
     background: linear-gradient(135deg, var(--peach), var(--pink));
@@ -2413,6 +2476,7 @@
     <nav>
       <ul>
         <li><a href="#" class="is-active">ホーム</a></li>
+        <li><a href="#everyone-anchor" id="navEveryone">みんな</a></li>
         <li><a href="#favs-anchor">お気に入り</a></li>
         <li><a href="#mypage-anchor" id="navMyPage">マイページ</a></li>
         <li><a href="#how-anchor">使い方</a></li>
@@ -2440,6 +2504,7 @@
     <span class="hero-badge"><span class="dot-anim"></span><span id="online-count">8</span>人 がオンライン中だよ</span>
     <span class="hero-badge badge-cream">🔓&nbsp;アカウント登録なしでOK</span>
     <span class="hero-badge badge-mint">☁️&nbsp;みんなと共有</span>
+    <span class="hero-badge badge-visits">👀&nbsp;のべ <span id="visit-count">…</span> 人が来てくれたよ</span>
   </div>
   <h1>
     VRChatの<span class="pop">おともだち</span>、<br>
@@ -2565,10 +2630,11 @@
 
     <div class="save-status" id="saveStatus">
       <span class="save-ico">☁️</span>
-      <span>下書き保存中 ✨</span>
+      <span>入力して「更新する」を押すと保存されるよ ✨</span>
     </div>
 
     <div class="publish-row">
+      <button type="button" class="save-now-btn" id="saveNowBtn">💾 更新する</button>
       <button type="button" class="publish-btn" id="publishBtn">📣 公開する</button>
       <button type="button" class="unpublish-btn" id="unpublishBtn" style="display:none;">🌱 非公開にする</button>
     </div>
@@ -2603,8 +2669,19 @@
   </div>
 </section>
 
-<!-- ===== My Page ===== -->
-<section class="home-section mypage-section" id="mypage-anchor">
+<!-- ===== Everyone (all published users) ===== -->
+<section class="home-section" id="everyone-anchor">
+  <div class="home-head">
+    <div>
+      <h2>みんなの一覧 <span class="heart-em">♡</span></h2>
+      <p class="home-sub">ぽこっとに登録してるみんなだよ。気になる子をのぞいてみてね ✨</p>
+    </div>
+    <div class="everyone-count" id="everyoneCount"></div>
+  </div>
+  <div class="pick-grid" id="everyoneGrid">
+    <!-- all-user cards inserted by JS -->
+  </div>
+</section>
   <div class="home-head">
     <div>
       <h2>マイページ <span class="heart-em">♡</span></h2>
@@ -3350,49 +3427,72 @@
     }
 
     sorted.forEach((u, idx) => {
-      const isFaved = state.myFavs.has(u.id);
-      const isLiked = state.myLikes.has(u.id);
-      const card = document.createElement('div');
-      card.className = 'pick-card';
-      const isOnline = u.status === 'online';
-      const statusText = u.status === 'online' ? 'online' : (u.status === 'busy' ? 'busy' : 'おやすみ');
-      const avInner = u.avatar_url
-        ? `<img src="${escapeHTML(u.avatar_url)}" alt="">`
-        : (u.avatar_emoji || '🍀');
-      const avStyle = u.avatar_url ? '' : `background:${pickBg(u.id)}`;
-      card.innerHTML = `
-        <span class="online${isOnline ? '' : ' off'}">${statusText}</span>
-        <button class="heart-fav${isFaved ? ' faved' : ''}" type="button" aria-label="お気に入り" aria-pressed="${isFaved}">♡</button>
-        <div class="pick-av" style="${avStyle}">${avInner}</div>
-        <div class="pick-name">${escapeHTML(u.display_name)}</div>
-        <div class="pick-bio">${escapeHTML(u.bio || '')}</div>
-        <div class="pick-tags">
-          ${(u.tags || []).slice(0,5).map(t => `<span class="pick-tag${state.selectedTags.has(t) ? ' match' : ''}">#${escapeHTML(t)}</span>`).join('')}
-        </div>
-        <div class="pick-compat">
-          ${state.selectedTags.size > 0
-            ? `あなたと <span class="num">${u.pct}%</span> ぴったり<span class="shared">共通タグ ${u.shared} / ${state.selectedTags.size}個 ・ ♡${u.likes_count}</span>`
-            : `みんなから ♡<span class="num">${u.likes_count}</span><span class="shared">タグを選ぶと相性度がでるよ</span>`}
-        </div>
-        <button class="pick-cta${isLiked ? ' done' : ''}" type="button">${isLiked ? '♡ いいね済み' : '♡ いいねする'}</button>
-      `;
-      grid.appendChild(card);
+      grid.appendChild(makeUserCard(u, idx, { showCompat: true }));
+    });
+  }
 
-      // entrance animation
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(10px)';
-      setTimeout(() => {
-        card.style.transition = 'opacity 0.4s, transform 0.4s';
-        card.style.opacity = '1';
-        card.style.transform = '';
-      }, idx * 30);
+  function escapeHTML(s) {
+    return String(s || '').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+  }
 
-      // bind
-      const heart = card.querySelector('.heart-fav');
+  // Build a single user card element (shared by renderCards & renderEveryone)
+  function makeUserCard(u, idx, opts) {
+    opts = opts || {};
+    const isFaved = state.myFavs.has(u.id);
+    const isLiked = state.myLikes.has(u.id);
+    const isMe = u.id === state.myProfileId;
+    const card = document.createElement('div');
+    card.className = 'pick-card';
+    const isOnline = u.status === 'online';
+    const statusText = u.status === 'online' ? 'online' : (u.status === 'busy' ? 'busy' : 'おやすみ');
+    const avInner = u.avatar_url
+      ? `<img src="${escapeHTML(u.avatar_url)}" alt="">`
+      : (u.avatar_emoji || '🍀');
+    const avStyle = u.avatar_url ? '' : `background:${pickBg(u.id)}`;
+    const showCompat = opts.showCompat !== false;
+    const compatHtml = showCompat
+      ? `<div class="pick-compat">
+          ${state.selectedTags.size > 0 && !isMe
+            ? `あなたと <span class="num">${u.pct != null ? u.pct : calcMatch(u).pct}%</span> ぴったり<span class="shared">共通タグ ${u.shared != null ? u.shared : calcMatch(u).shared} / ${state.selectedTags.size}個 ・ ♡${u.likes_count}</span>`
+            : `みんなから ♡<span class="num">${u.likes_count}</span><span class="shared">${isMe ? 'これはあなたのカードだよ' : 'タグを選ぶと相性度がでるよ'}</span>`}
+        </div>`
+      : `<div class="pick-compat">みんなから ♡<span class="num">${u.likes_count}</span><span class="shared">${isMe ? 'これはあなたのカードだよ' : ''}</span></div>`;
+    const ctaHtml = isMe
+      ? ''
+      : `<button class="pick-cta${isLiked ? ' done' : ''}" type="button">${isLiked ? '♡ いいね済み' : '♡ いいねする'}</button>`;
+    const favBtnHtml = isMe
+      ? ''
+      : `<button class="heart-fav${isFaved ? ' faved' : ''}" type="button" aria-label="お気に入り" aria-pressed="${isFaved}">♡</button>`;
+    const meBadge = isMe ? '<span class="me-badge">あなた</span>' : '';
+    card.innerHTML = `
+      <span class="online${isOnline ? '' : ' off'}">${statusText}</span>
+      ${favBtnHtml}
+      ${meBadge}
+      <div class="pick-av" style="${avStyle}">${avInner}</div>
+      <div class="pick-name">${escapeHTML(u.display_name)}</div>
+      <div class="pick-bio">${escapeHTML(u.bio || '')}</div>
+      <div class="pick-tags">
+        ${(u.tags || []).slice(0,5).map(t => `<span class="pick-tag${state.selectedTags.has(t) ? ' match' : ''}">#${escapeHTML(t)}</span>`).join('')}
+      </div>
+      ${compatHtml}
+      ${ctaHtml}
+    `;
+
+    // entrance animation
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(10px)';
+    setTimeout(() => {
+      card.style.transition = 'opacity 0.4s, transform 0.4s';
+      card.style.opacity = '1';
+      card.style.transform = '';
+    }, idx * 30);
+
+    // bind fav
+    const heart = card.querySelector('.heart-fav');
+    if (heart) {
       heart.addEventListener('click', async (e) => {
         e.stopPropagation();
         const nowFaved = !heart.classList.contains('faved');
-        // optimistic
         heart.classList.toggle('faved', nowFaved);
         heart.setAttribute('aria-pressed', String(nowFaved));
         if (nowFaved) {
@@ -3403,36 +3503,81 @@
         updateFavCounter();
         if (state.favOnly && !nowFaved) renderCards();
       });
+    }
 
-      const cta = card.querySelector('.pick-cta');
+    // bind like
+    const cta = card.querySelector('.pick-cta');
+    if (cta) {
       cta.addEventListener('click', async (e) => {
         e.stopPropagation();
         if (cta.classList.contains('done')) return;
-        // optimistic
         cta.classList.add('done');
         cta.textContent = '♡ いいね済み';
         cta.disabled = true;
         showSparkle();
         await toggleLike(u.id, true);
-        // refresh that card's likes_count
         const fresh = await supa.from('profiles_with_counts').select('likes_count').eq('id', u.id).single();
         if (fresh.data) {
           const idx2 = state.allProfiles.findIndex(p => p.id === u.id);
           if (idx2 >= 0) state.allProfiles[idx2].likes_count = fresh.data.likes_count;
         }
       });
+    }
 
-      // Avatar click → open profile detail modal
-      const av = card.querySelector('.pick-av');
-      av.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openProfileModal(u.id);
-      });
+    // avatar click → modal
+    const av = card.querySelector('.pick-av');
+    av.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openProfileModal(u.id);
+    });
+
+    return card;
+  }
+
+  // Render the "everyone" grid (all published users, including self)
+  function renderEveryone() {
+    const grid = document.getElementById('everyoneGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    // newest first
+    const all = state.allProfiles.slice().sort((a, b) =>
+      new Date(b.created_at) - new Date(a.created_at));
+    const countEl = document.getElementById('everyoneCount');
+    if (countEl) countEl.textContent = `${all.length}人`;
+    if (all.length === 0) {
+      grid.innerHTML = '<div class="pick-empty">まだ誰も公開してないみたい。最初のひとりになろう ✨</div>';
+      return;
+    }
+    all.forEach((u, idx) => {
+      grid.appendChild(makeUserCard(u, idx, { showCompat: false }));
     });
   }
 
-  function escapeHTML(s) {
-    return String(s || '').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+  // ===== Visit counter =====
+  async function recordVisit() {
+    const visitEl = document.getElementById('visit-count');
+    try {
+      // Only increment once per browser session to avoid inflating on reloads
+      const sessionKey = 'pocotto:visited_session';
+      const alreadyCounted = sessionStorage.getItem(sessionKey);
+      let value = null;
+      if (!alreadyCounted) {
+        const { data, error } = await supa.rpc('increment_visits');
+        if (!error && data != null) {
+          value = typeof data === 'number' ? data : parseInt(data, 10);
+          sessionStorage.setItem(sessionKey, '1');
+        }
+      }
+      if (value == null) {
+        // Just read the current value
+        const { data } = await supa.from('site_counters').select('value').eq('key', 'visits').maybeSingle();
+        if (data) value = Number(data.value);
+      }
+      if (visitEl && value != null) visitEl.textContent = value.toLocaleString();
+    } catch (e) {
+      console.warn('recordVisit err', e);
+      if (visitEl) visitEl.textContent = '—';
+    }
   }
 
   // ===== Profile detail modal =====
@@ -4149,7 +4294,7 @@
     el.classList.add('flash');
     const span = el.querySelector('span:last-child');
     const ico = el.querySelector('.save-ico');
-    if (kind === 'saved') { span.textContent = '下書き保存したよ ♡'; ico.textContent = '✨'; }
+    if (kind === 'saved') { span.textContent = '更新したよ ♡'; ico.textContent = '✨'; }
     else if (kind === 'published') { span.textContent = '公開したよ！みんなの一覧に並んでる ♡'; ico.textContent = '🎉'; }
     else if (kind === 'unpublished') { span.textContent = '非公開にしたよ（下書きは残ってるよ）'; ico.textContent = '🌱'; }
     else if (kind === 'error') { span.textContent = '保存に失敗… もう一度押してみてね'; ico.textContent = '⚠️'; }
@@ -4160,9 +4305,9 @@
     saveFlashTimer = setTimeout(() => {
       el.classList.remove('flash');
       ico.textContent = '☁️';
-      if (state.published) span.textContent = '公開中だよ ✨ 編集はそのまま反映されるよ';
-      else if (state.myProfileId) span.textContent = '下書き保存中 ✨ 「公開する」で一覧に並ぶよ';
-      else span.textContent = 'なまえを入れると下書きが保存されるよ ✨';
+      if (state.published) span.textContent = '公開中だよ ✨ 編集したら「更新する」で反映してね';
+      else if (state.myProfileId) span.textContent = '保存済み ✨ 編集したら「更新する」を押してね';
+      else span.textContent = '入力して「更新する」を押すと保存されるよ ✨';
     }, 1600);
   }
 
@@ -4172,13 +4317,13 @@
     const span = el.querySelector('span:last-child');
     const ico = el.querySelector('.save-ico');
     if (state.published) {
-      span.textContent = '公開中だよ ✨ 編集はそのまま反映されるよ';
+      span.textContent = '公開中だよ ✨ 編集したら「更新する」で反映してね';
       ico.textContent = '☁️';
     } else if (state.myProfileId) {
-      span.textContent = '下書き保存中 ✨ 「公開する」で一覧に並ぶよ';
+      span.textContent = '保存済み ✨ 編集したら「更新する」を押してね';
       ico.textContent = '📝';
     } else {
-      span.textContent = 'なまえを入れると下書きが保存されるよ ✨';
+      span.textContent = '入力して「更新する」を押すと保存されるよ ✨';
       ico.textContent = '✏️';
     }
     refreshPublishButton();
@@ -4186,22 +4331,11 @@
 
   // ===== Profile inputs =====
   let saveTimer = null;
+  // Auto-save is disabled — profile changes are saved only when the user
+  // taps the "更新する" (save) button. This function is intentionally a no-op
+  // so that existing callers keep working without saving automatically.
   function debouncedSaveProfile() {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(async () => {
-      const before = state.published;
-      const result = await upsertMyProfile();
-      if (result && !before) {
-        // newly published! Re-fetch all profiles so card shows up
-        await reloadFeed();
-      } else if (result) {
-        // refresh self in feed cache
-        const idx = state.allProfiles.findIndex(p => p.id === state.myProfileId);
-        if (idx >= 0) {
-          state.allProfiles[idx] = { ...state.allProfiles[idx], ...result, likes_count: state.allProfiles[idx].likes_count, favs_count: state.allProfiles[idx].favs_count };
-        }
-      }
-    }, 600);
+    /* no-op: manual save only */
   }
 
   function setupProfileInputs() {
@@ -4244,6 +4378,30 @@
     // Publish / unpublish buttons
     const pubBtn = document.getElementById('publishBtn');
     const unpubBtn = document.getElementById('unpublishBtn');
+    const saveNowBtn = document.getElementById('saveNowBtn');
+    if (saveNowBtn) {
+      saveNowBtn.addEventListener('click', async () => {
+        const name = (state.profile.display_name || '').trim();
+        if (!name) {
+          flashSaveStatus('need-fill-first');
+          return;
+        }
+        saveNowBtn.disabled = true;
+        const orig = saveNowBtn.textContent;
+        const result = await upsertMyProfile();
+        saveNowBtn.disabled = false;
+        if (result) {
+          // sync feed so the user's own card reflects the latest data
+          await reloadFeed();
+          saveNowBtn.textContent = '✅ 更新したよ';
+          saveNowBtn.classList.add('saved-flash');
+          setTimeout(() => {
+            saveNowBtn.textContent = orig;
+            saveNowBtn.classList.remove('saved-flash');
+          }, 1600);
+        }
+      });
+    }
     if (pubBtn) {
       pubBtn.addEventListener('click', async () => {
         await setPublishFlag(true);
@@ -4340,8 +4498,7 @@
         state.profile.avatar_url = url;
         refreshAvatarUI();
         renderPreview();
-        setHint(DEFAULT_HINT);
-        debouncedSaveProfile();
+        setHint('画像をセットしたよ！下の「更新する」で保存してね ✨');
       } catch (err) {
         console.warn('avatar upload failed', err);
         setHint('アップロードに失敗したよ。もう一度試してね', true);
@@ -4545,6 +4702,7 @@
   async function reloadFeed() {
     state.allProfiles = await fetchAllProfiles();
     renderCards();
+    renderEveryone();
     renderMyPage();
   }
 
@@ -4589,10 +4747,12 @@
     renderTagCloud();
     renderPreview();
     renderCards();
+    renderEveryone();
     updateFavCounter();
     renderMyPage();
     refreshSaveStatusBaseline();
     subscribeNotificationsRealtime();
+    recordVisit();
   }
 
   loadInitial();
