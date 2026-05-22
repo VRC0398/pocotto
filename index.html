@@ -2477,6 +2477,7 @@
       <ul>
         <li><a href="#" class="is-active">ホーム</a></li>
         <li><a href="#everyone-anchor" id="navEveryone">みんな</a></li>
+        <li><a href="#likedby-anchor" id="navLikedBy">♡くれた人</a></li>
         <li><a href="#favs-anchor">お気に入り</a></li>
         <li><a href="#mypage-anchor" id="navMyPage">マイページ</a></li>
         <li><a href="#how-anchor">使い方</a></li>
@@ -2680,6 +2681,20 @@
   </div>
   <div class="pick-grid" id="everyoneGrid">
     <!-- all-user cards inserted by JS -->
+  </div>
+</section>
+
+<!-- ===== Liked-by (people who liked me) ===== -->
+<section class="home-section" id="likedby-anchor">
+  <div class="home-head">
+    <div>
+      <h2>♡ してくれた人 <span class="heart-em">♡</span></h2>
+      <p class="home-sub">あなたに「いいね」してくれた子だよ。気が合いそうならチャットしてみよう ✨</p>
+    </div>
+    <div class="everyone-count" id="likedByCount"></div>
+  </div>
+  <div class="pick-grid" id="likedByGrid">
+    <!-- liked-by cards inserted by JS -->
   </div>
 </section>
   <div class="home-head">
@@ -3553,6 +3568,32 @@
     });
   }
 
+  // Render the "liked-by" grid (people who liked me)
+  async function renderLikedBySection() {
+    const grid = document.getElementById('likedByGrid');
+    if (!grid) return;
+    const countEl = document.getElementById('likedByCount');
+    if (!state.myProfileId) {
+      grid.innerHTML = '<div class="pick-empty">プロフィールを公開すると、♡してくれた子が見れるようになるよ ✨</div>';
+      if (countEl) countEl.textContent = '';
+      return;
+    }
+    await fetchLikedBy();
+    // Map liked-by ids to profiles (only those still in the published feed)
+    const likers = state.likedBy
+      .map(id => state.allProfiles.find(p => p.id === id))
+      .filter(Boolean);
+    if (countEl) countEl.textContent = `${likers.length}人`;
+    grid.innerHTML = '';
+    if (likers.length === 0) {
+      grid.innerHTML = '<div class="pick-empty">まだ ♡ してくれた子はいないみたい。プロフィールを充実させてみよう ✨</div>';
+      return;
+    }
+    likers.forEach((u, idx) => {
+      grid.appendChild(makeUserCard(u, idx, { showCompat: false }));
+    });
+  }
+
   // ===== Visit counter =====
   async function recordVisit() {
     const visitEl = document.getElementById('visit-count');
@@ -4224,6 +4265,7 @@
           // Refresh fed user lists / my page
           await fetchLikedBy();
           renderMyPage();
+          renderLikedBySection();
         })
       .on('postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages', filter: `to_profile=eq.${myId}` },
@@ -4704,6 +4746,7 @@
     renderCards();
     renderEveryone();
     renderMyPage();
+    renderLikedBySection();
   }
 
   async function loadInitial() {
@@ -4748,6 +4791,7 @@
     renderPreview();
     renderCards();
     renderEveryone();
+    renderLikedBySection();
     updateFavCounter();
     renderMyPage();
     refreshSaveStatusBaseline();
